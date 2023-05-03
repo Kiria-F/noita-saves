@@ -1,7 +1,9 @@
 import os
 import shutil
 import re
+import win32com.client
 
+filename = os.path.basename(__file__).removesuffix('.py')
 appdata = os.getenv('APPDATA')
 appdata = appdata.replace('Roaming', 'LocalLow')
 game_dir = appdata + r'\Nolla_Games_Noita'
@@ -23,17 +25,15 @@ while scenario != 'e':
         print('<< Nothing >>')
     print()
 
-    scenario = ''
     scenario_correct = False
     while not scenario_correct:
         scenario = input('Save (S) | Load (L) | Delete (D) | Exit (E) >> ').lower().strip()
-        if scenario in ('s', 'l', 'd', 'e'):
+        if scenario in ('s', 'l', 'd', 'e', 'cs-d', 'cs-w', 'rs-d', 'rs-w'):
             scenario_correct = True
         else:
             print('Error: Incorrect scenario')
 
     if scenario == 's':
-        save_name = ''
         save_name_correct = False
         while not save_name_correct:
             save_name = input('Input save name >> ')
@@ -50,7 +50,6 @@ while scenario != 'e':
         shutil.copytree(game_dir + r'\save00', saves_dir + '\\' + save_name)
 
     if scenario in ('l', 'd'):
-        save_index = 0
         save_index_correct = False
         while not save_index_correct:
             save_index = int(input('Select the save index >> '))
@@ -66,6 +65,28 @@ while scenario != 'e':
 
     if scenario in ('s', 'l', 'd'):
         print('\nDone!\n\n')
+
+    if scenario in ('cs-d', 'cs-w', 'rs-d', 'rs-w'):
+        if '-d' in scenario:
+            shortcut_path = os.getenv('USERPROFILE') + r'\Desktop'
+        elif '-w' in scenario:
+            shortcut_path = os.getenv('APPDATA') + r'\Microsoft\Windows\Start Menu\Programs'
+        shortcut_path += '\\' + filename + '.lnk'
+        shortcut_removed = False
+        if os.path.exists(shortcut_path):
+            os.remove(shortcut_path)
+            shortcut_removed = True
+
+        if 'cs' in scenario:
+            shell = win32com.client.Dispatch("WScript.Shell")
+            shortcut = shell.CreateShortCut(shortcut_path)
+            shortcut.Targetpath = os.getcwd() + '\\' + filename + '.py'
+            shortcut.IconLocation = os.getcwd() + '\\' + filename + '.ico'
+            shortcut.WorkingDirectory = os.getcwd()
+            shortcut.save()
+            print('\nShortcut ' + ('updated' if shortcut_removed else 'created') + '!\n\n')
+        else:
+            print('\nShortcut removed!\n\n')
 
 if len(saves) == 0:
     os.rmdir(saves_dir)
