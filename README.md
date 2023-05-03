@@ -1,5 +1,6 @@
 # NoitaSaves
-## - Now you have [Save] and [Load] buttons for Noita! :D
+### - Now you have [Save] and [Load] buttons for Noita! :D
+![](https://cdn.discordapp.com/attachments/718161355747623005/1103313065887416360/NoitaSaves.png)
 
 ### Чтобы сохранить игру:
 - Выйдите из игры с сохранением
