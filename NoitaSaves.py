@@ -7,6 +7,10 @@ appdata = appdata.replace('Roaming', 'LocalLow')
 game_dir = appdata + r'\Nolla_Games_Noita'
 saves_dir = appdata + r'\Nolla_Games_Noita_Saves'
 
+if not os.path.exists(saves_dir):
+    os.mkdir(saves_dir)
+
+saves = []
 scenario = 'Init'
 while scenario != 'e':
 
@@ -15,6 +19,8 @@ while scenario != 'e':
     printing_saves = [save.replace('_', ' ') for save in saves]
     for index, save in enumerate(printing_saves):
         print('#', index + 1, ' ' if index < 9 else '', ' >> ', save, sep='')
+    if len(saves) == 0:
+        print('<< Nothing >>')
     print()
 
     scenario = ''
@@ -31,7 +37,7 @@ while scenario != 'e':
         save_name_correct = False
         while not save_name_correct:
             save_name = input('Input save name >> ')
-            save_name_errors = set(re.findall(r'[^A-Za-zА-Яа-я\- ]', save_name))
+            save_name_errors = set(re.findall(r'[^A-Za-zА-Яа-я0-9\- ]', save_name))
             if len(save_name_errors) > 0:
                 print('Error: Incorrect symbols: [', end='')
                 print(*save_name_errors, sep='], [', end=']\n')
@@ -59,4 +65,7 @@ while scenario != 'e':
             shutil.rmtree(saves_dir + '\\' + saves[save_index - 1])
 
     if scenario in ('s', 'l', 'd'):
-        print('Done!\n\n')
+        print('\nDone!\n\n')
+
+if len(saves) == 0:
+    os.rmdir(saves_dir)
