@@ -60,4 +60,3 @@ while scenario != 'e':
 
     if scenario in ('s', 'l', 'd'):
         print('Done!\n\n')
-    input('Press Enter to continue...')
