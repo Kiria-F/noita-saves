@@ -26,12 +26,20 @@ while scenario != 'e':
     print()
 
     scenario_correct = False
+    index_buffer = 0
     while not scenario_correct:
-        scenario = input('Save (S) | Load (L) | Delete (D) | Exit (E) >> ').lower().strip()
+        scenario = input('Save (S) | Load (L) | Delete (D) | Exit (E) >> ').lower().replace(' ', '')
+        if scenario[0] in ('l', 'd'):
+            buffer = scenario[1:]
+            if str.isdecimal(buffer):
+                index = int(buffer)
+                if 0 < index <= len(saves):
+                    index_buffer = index
+                    scenario = scenario[0]
         if scenario in ('s', 'l', 'd', 'e', 'cs-d', 'cs-w', 'rs-d', 'rs-w'):
             scenario_correct = True
         else:
-            print('Error: Incorrect scenario')
+            print('\nError: Incorrect scenario\n\n')
 
     if scenario in ('s', 'l', 'd'):
 
@@ -56,13 +64,16 @@ while scenario != 'e':
                 shutil.copytree(game_dir + r'\save00', saves_dir + '\\' + save_name)
 
             elif scenario in ('l', 'd'):
-                save_index_correct = False
-                while not save_index_correct:
-                    save_index = int(input('Select the save index >> '))
-                    if 0 < save_index <= len(saves):
-                        save_index_correct = True
-                    else:
-                        print('Error: Incorrect index')
+                if index_buffer > 0:
+                    save_index = index_buffer
+                else:
+                    save_index_correct = False
+                    while not save_index_correct:
+                        save_index = int(input('Select the save index >> '))
+                        if 0 < save_index <= len(saves):
+                            save_index_correct = True
+                        else:
+                            print('Error: Incorrect index')
                 if scenario == 'l':
                     shutil.rmtree(game_dir + r'\save00')
                     shutil.copytree(saves_dir + '\\' + saves[save_index - 1], game_dir + r'\save00')
