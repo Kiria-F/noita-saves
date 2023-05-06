@@ -20,8 +20,8 @@ if (version.major, version.minor) != (3, 11):
 
 shortcuts_enabled = True
 try:
-    imp.import_module('win32com.client')
-except ImportError as e:
+    win32com_client = imp.import_module('win32com.client')
+except ImportError:
     anyAlert = True
     shortcuts_enabled = False
     print('''| Module win32com not found         |
@@ -127,7 +127,7 @@ while scenario != 'e':
                 shortcut_removed = True
 
             if 'cs' in scenario:
-                shell = win32com.client.Dispatch("WScript.Shell")
+                shell = win32com_client.Dispatch("WScript.Shell")
                 shortcut = shell.CreateShortCut(shortcut_path)
                 shortcut.Targetpath = os.getcwd() + '\\' + filename + '.py'
                 shortcut.IconLocation = os.getcwd() + '\\' + filename + '.ico'
