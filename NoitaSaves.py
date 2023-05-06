@@ -1,7 +1,37 @@
+import sys
 import os
 import shutil
 import re
-import win32com.client
+import importlib as imp
+
+anyAlert = False
+version = sys.version_info
+if (version.major, version.minor) != (3, 11):
+    anyAlert = True
+    version = sys.version_info
+    version = str(version.major) + '.' + str(version.minor)
+    version += ' ' * (12 - len(version))
+    print('''
++---------------ALERT---------------+
+| You are using Python {version} |
+| Python 3.11 is recommended        |
+| Some features may be unavailable  |
++-----------------------------------+'''.format(version=version))
+
+shortcuts_enabled = True
+try:
+    imp.import_module('win32com.client')
+except ImportError as e:
+    anyAlert = True
+    shortcuts_enabled = False
+    print('''| Module win32com not found         |
+| Shortcut feature is unavailable   |
++-----------------------------------+
+''')
+
+if anyAlert:
+    input('Press Enter to continue...')
+    print('\n')
 
 filename = os.path.basename(__file__).removesuffix('.py')
 appdata = os.getenv('APPDATA')
@@ -83,26 +113,29 @@ while scenario != 'e':
             print('\nDone!\n\n')
 
     if scenario in ('cs-d', 'cs-w', 'rs-d', 'rs-w'):
-        if '-d' in scenario:
-            shortcut_path = os.getenv('USERPROFILE') + r'\Desktop'
-        elif '-w' in scenario:
-            shortcut_path = os.getenv('APPDATA') + r'\Microsoft\Windows\Start Menu\Programs'
-        shortcut_path += '\\' + filename + '.lnk'
-        shortcut_removed = False
-        if os.path.exists(shortcut_path):
-            os.remove(shortcut_path)
-            shortcut_removed = True
-
-        if 'cs' in scenario:
-            shell = win32com.client.Dispatch("WScript.Shell")
-            shortcut = shell.CreateShortCut(shortcut_path)
-            shortcut.Targetpath = os.getcwd() + '\\' + filename + '.py'
-            shortcut.IconLocation = os.getcwd() + '\\' + filename + '.ico'
-            shortcut.WorkingDirectory = os.getcwd()
-            shortcut.save()
-            print('\nShortcut ' + ('updated' if shortcut_removed else 'created') + '!\n\n')
+        if not shortcuts_enabled:
+            print('\nError: Shortcut feature is disabled\n\n')
         else:
-            print('\nShortcut removed!\n\n')
+            if '-d' in scenario:
+                shortcut_path = os.getenv('USERPROFILE') + r'\Desktop'
+            elif '-w' in scenario:
+                shortcut_path = os.getenv('APPDATA') + r'\Microsoft\Windows\Start Menu\Programs'
+            shortcut_path += '\\' + filename + '.lnk'
+            shortcut_removed = False
+            if os.path.exists(shortcut_path):
+                os.remove(shortcut_path)
+                shortcut_removed = True
+
+            if 'cs' in scenario:
+                shell = win32com.client.Dispatch("WScript.Shell")
+                shortcut = shell.CreateShortCut(shortcut_path)
+                shortcut.Targetpath = os.getcwd() + '\\' + filename + '.py'
+                shortcut.IconLocation = os.getcwd() + '\\' + filename + '.ico'
+                shortcut.WorkingDirectory = os.getcwd()
+                shortcut.save()
+                print('\nShortcut ' + ('updated' if shortcut_removed else 'created') + '!\n\n')
+            else:
+                print('\nShortcut removed!\n\n')
 
 if len(saves) == 0:
     os.rmdir(saves_dir)
