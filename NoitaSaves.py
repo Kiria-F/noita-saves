@@ -78,7 +78,7 @@ while scenario != 'e':
     print('\n\nSaves:')
     saves = [(save, os.path.getctime(saves_dir + '\\' + save)) for save in os.listdir(saves_dir)]
     saves.sort(key=lambda s: s[1])
-    for index, (save, creation_time) in enumerate(saves):
+    for (index, (save, creation_time)) in enumerate(saves):
         printing_save = save.replace('_', ' ')
         print('#', index + 1,
               ' ' if index < 9 else '',
@@ -102,8 +102,8 @@ while scenario != 'e':
         if scenario == '':
             continue
         if scenario[0] in ('s', 'l', 'd', 'e'):
-            scenario = scenario[0]
             buffer = scenario[1:].strip()
+            scenario = scenario[0]
         if scenario in ('s', 'l', 'd', 'e', 'cs-d', 'cs-w', 'rs-d', 'rs-w'):
             scenario_correct = True
         else:
