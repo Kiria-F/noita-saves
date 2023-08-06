@@ -62,7 +62,13 @@ first_time = True
 while scenario != 'e':
     if first_time:
         first_time = False
-        print('Welcome to NoitaSaves!')
+        print('''Welcome to NoitaSaves!\n
+ > To make a save, you should save and quit the game
+ > You also need to close Noita before loading a save
+ > If the selected save has not loaded, just load it one more time
+   (It can happen due to steam sync)
+ > You can also create a shortcut for NoitaSaves on your start menu or desktop
+   (Check github page for more info: https://github.com/Sedo-KFM/NoitaSaves)''')
 
     if error_message != '':
         input('\nError: ' + error_message + '\nPress Enter...')
