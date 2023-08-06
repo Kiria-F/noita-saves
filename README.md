@@ -7,7 +7,7 @@
 - Quit the game
 - Open NoitaSaves and enter "S" (Save)
 - Enter the save's name
-- Done! Now save should be in the save-list and will be available until you delete it
+- Done! Now your save should be in the save list and will be available until you delete it
 
 ### To load a save:
 - Quit the game
@@ -20,7 +20,7 @@
 
 > You can input commands in lower-case
 
-> You can also input a command and a save's index one-line, for example: "L 4" or "d2"
+> You can also input a full command one-line, for example: "L 4", "d2" or "s my save"
 
 ### Now you can also create a shortcut for NoitaSaves on your desktop and in the Start menu!
 (These commands are not displayed in the application because they are rarely used)
@@ -57,7 +57,7 @@
 
 > Команды можно вводить в нижнем регистре
 
-> Также можно вводить сразу команду и индекс сохранения, например "L 4" или "d2"
+> Также можно вводить полную команду в одну строку, например "L 4", "d2" или "s my save"
 
 ### Также теперь можно сделать ярлык для NoitaSaves на рабочем столе и в меню Пуск!
 (Эти команды не отображаются в самом приложении, так как редко используются)
