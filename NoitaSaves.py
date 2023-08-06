@@ -44,12 +44,18 @@ if not os.path.exists(saves_dir):
     os.mkdir(saves_dir)
 
 saves = []
+error_message = ''
 scenario = 'Init'
 first_time = True
 while scenario != 'e':
     if first_time:
         first_time = False
         print('Welcome to NoitaSaves!')
+
+    if error_message != '':
+        input('\nError: ' + error_message + '\nPress Enter...')
+        error_message = ''
+
     print('\n\nSaves:')
     saves = os.listdir(saves_dir)
     printing_saves = [save.replace('_', ' ') for save in saves]
@@ -65,19 +71,19 @@ while scenario != 'e':
         scenario = input('Save (S) | Load (L) | Delete (D) | Exit (E) >> ').lower().replace(' ', '')
         if scenario == '':
             continue
-        if scenario[0] in ('s', 'l', 'd'):
+        if scenario[0] in ('s', 'l', 'd', 'e'):
             buffer = scenario[1:]
             scenario = scenario[0]
         if scenario in ('s', 'l', 'd', 'e', 'cs-d', 'cs-w', 'rs-d', 'rs-w'):
             scenario_correct = True
         else:
-            print('\nError: Incorrect scenario\n\n')
+            error_message = 'Incorrect scenario'
             continue
 
     if scenario in ('s', 'l', 'd'):
 
         if not os.path.exists(game_dir):
-            print('\nError: Game files not found\n\n')
+            error_message = 'Game files not found'
             continue
 
         if scenario == 's':
@@ -87,16 +93,15 @@ while scenario != 'e':
                 save_name = buffer
             save_name_errors = set(re.findall(r'[^A-Za-zА-Яа-я0-9\- ]', save_name))
             if len(save_name_errors) > 0:
-                print('Error: Incorrect symbols: [', end='')
-                print(*save_name_errors, sep='], [', end=']\n')
+                error_message = 'Incorrect symbols: [' + '], ['.join(save_name_errors) + ']'
+                continue
+            save_name = save_name.replace(' ', '_')
+            if save_name in os.listdir(saves_dir):
+                error_message = 'This save is already exists'
+                continue
             else:
-                save_name = save_name.replace(' ', '_')
-                if save_name in os.listdir(saves_dir):
-                    print('Error: This save is already exists')
-                    continue
-                else:
-                    print('Saving...')
-                    shutil.copytree(game_dir + r'\save00', saves_dir + '\\' + save_name)
+                print('Saving...')
+                shutil.copytree(game_dir + r'\save00', saves_dir + '\\' + save_name)
 
         elif scenario in ('l', 'd'):
             save_index = None
@@ -106,12 +111,12 @@ while scenario != 'e':
                 save_index = int(buffer)
                 buffer = None
                 if not 0 < save_index <= len(saves):
-                    print('Error: Incorrect index')
+                    error_message = 'Incorrect index'
                     continue
             elif scenario == 'd' and buffer in ('a', 'al', 'all'):
                 buffer = 'all'
             else:
-                print('Error: Incorrect index')
+                error_message = 'Incorrect index'
                 continue
 
             if scenario == 'l':
@@ -133,28 +138,29 @@ while scenario != 'e':
 
     if scenario in ('cs-d', 'cs-w', 'rs-d', 'rs-w'):
         if not shortcuts_enabled:
-            print('\nError: Shortcut feature is disabled\n\n')
-        else:
-            if '-d' in scenario:
-                shortcut_path = os.getenv('USERPROFILE') + r'\Desktop'
-            elif '-w' in scenario:
-                shortcut_path = os.getenv('APPDATA') + r'\Microsoft\Windows\Start Menu\Programs'
-            shortcut_path += '\\' + filename + '.lnk'
-            shortcut_removed = False
-            if os.path.exists(shortcut_path):
-                os.remove(shortcut_path)
-                shortcut_removed = True
+            error_message = 'Shortcut feature is disabled'
+            continue
 
-            if 'cs' in scenario:
-                shell = win32com_client.Dispatch("WScript.Shell")
-                shortcut = shell.CreateShortCut(shortcut_path)
-                shortcut.Targetpath = os.getcwd() + '\\' + filename + '.py'
-                shortcut.IconLocation = os.getcwd() + '\\' + filename + '.ico'
-                shortcut.WorkingDirectory = os.getcwd()
-                shortcut.save()
-                print('\nShortcut ' + ('updated' if shortcut_removed else 'created') + '!\n\n')
-            else:
-                print('\nShortcut removed!\n\n')
+        if '-d' in scenario:
+            shortcut_path = os.getenv('USERPROFILE') + r'\Desktop'
+        elif '-w' in scenario:
+            shortcut_path = os.getenv('APPDATA') + r'\Microsoft\Windows\Start Menu\Programs'
+        shortcut_path += '\\' + filename + '.lnk'
+        shortcut_removed = False
+        if os.path.exists(shortcut_path):
+            os.remove(shortcut_path)
+            shortcut_removed = True
+
+        if 'cs' in scenario:
+            shell = win32com_client.Dispatch("WScript.Shell")
+            shortcut = shell.CreateShortCut(shortcut_path)
+            shortcut.Targetpath = os.getcwd() + '\\' + filename + '.py'
+            shortcut.IconLocation = os.getcwd() + '\\' + filename + '.ico'
+            shortcut.WorkingDirectory = os.getcwd()
+            shortcut.save()
+            print('\nShortcut ' + ('updated' if shortcut_removed else 'created') + '!\n\n')
+        else:
+            print('\nShortcut removed!\n\n')
 
 if len(saves) == 0:
     os.rmdir(saves_dir)
