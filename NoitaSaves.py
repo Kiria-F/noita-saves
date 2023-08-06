@@ -60,13 +60,12 @@ while scenario != 'e':
     print()
 
     scenario_correct = False
-    buffer = None
+    buffer = ''
     while not scenario_correct:
         scenario = input('Save (S) | Load (L) | Delete (D) | Exit (E) >> ').lower().replace(' ', '')
         if scenario == '':
-            print('\nError: Incorrect scenario\n\n')
             continue
-        if scenario[0] in ('l', 'd'):
+        if scenario[0] in ('s', 'l', 'd'):
             buffer = scenario[1:]
             scenario = scenario[0]
         if scenario in ('s', 'l', 'd', 'e', 'cs-d', 'cs-w', 'rs-d', 'rs-w'):
