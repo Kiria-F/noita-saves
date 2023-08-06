@@ -149,6 +149,7 @@ while scenario != 'e':
                 continue
 
             if scenario == 'l':
+                print('Loading...')
                 if os.path.exists(game_dir + r'\save00'):
                     shutil.rmtree(game_dir + r'\save00')
                 shutil.copytree(saves_dir + '\\' + saves[save_index - 1][0], game_dir + r'\save00')
