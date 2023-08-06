@@ -70,12 +70,13 @@ while scenario != 'e':
 
     print('\n\nSaves:')
     saves = [(save, os.path.getctime(saves_dir + '\\' + save)) for save in os.listdir(saves_dir)]
+    saves.sort(key=lambda s: s[1])
     # printing_saves = [save.replace('_', ' ') for save in saves]
     for index, (save, creation_time) in enumerate(saves):
         printing_save = save.replace('_', ' ')
         print('#', index + 1,
               ' ' if index < 9 else '',
-              ' >> ', printing_save, ' [',
+              ' >> ', printing_save, '  [',
               ' '.join(
                   time.ctime(creation_time)
                   .replace('  ', ' ')
