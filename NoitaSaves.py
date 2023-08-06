@@ -44,9 +44,12 @@ if not os.path.exists(saves_dir):
 
 saves = []
 scenario = 'Init'
+first_time = True
 while scenario != 'e':
-
-    print('Saves:')
+    if first_time:
+        first_time = False
+        print('Welcome to NoitaSaves!')
+    print('\n\nSaves:')
     saves = os.listdir(saves_dir)
     printing_saves = [save.replace('_', ' ') for save in saves]
     for index, save in enumerate(printing_saves):
@@ -56,20 +59,17 @@ while scenario != 'e':
     print()
 
     scenario_correct = False
-    index_buffer = 0
+    buffer = None
     while not scenario_correct:
         scenario = input('Save (S) | Load (L) | Delete (D) | Exit (E) >> ').lower().replace(' ', '')
         if scenario[0] in ('l', 'd'):
             buffer = scenario[1:]
-            if str.isdecimal(buffer):
-                index = int(buffer)
-                if 0 < index <= len(saves):
-                    index_buffer = index
-                    scenario = scenario[0]
+            scenario = scenario[0]
         if scenario in ('s', 'l', 'd', 'e', 'cs-d', 'cs-w', 'rs-d', 'rs-w'):
             scenario_correct = True
         else:
             print('\nError: Incorrect scenario\n\n')
+            continue
 
     if scenario in ('s', 'l', 'd'):
 
@@ -78,37 +78,49 @@ while scenario != 'e':
         else:
 
             if scenario == 's':
-                save_name_correct = False
-                while not save_name_correct:
-                    save_name = input('Input save name >> ')
-                    save_name_errors = set(re.findall(r'[^A-Za-zА-Яа-я0-9\- ]', save_name))
-                    if len(save_name_errors) > 0:
-                        print('Error: Incorrect symbols: [', end='')
-                        print(*save_name_errors, sep='], [', end=']\n')
+                save_name = input('Input save name >> ')
+                save_name_errors = set(re.findall(r'[^A-Za-zА-Яа-я0-9\- ]', save_name))
+                if len(save_name_errors) > 0:
+                    print('Error: Incorrect symbols: [', end='')
+                    print(*save_name_errors, sep='], [', end=']\n')
+                else:
+                    save_name = save_name.replace(' ', '_')
+                    if save_name in os.listdir(saves_dir):
+                        print('Error: This save is already exists')
                     else:
-                        save_name = save_name.replace(' ', '_')
-                        if save_name in os.listdir(saves_dir):
-                            print('Error: This save is already exists')
-                        else:
-                            save_name_correct = True
-                shutil.copytree(game_dir + r'\save00', saves_dir + '\\' + save_name)
+                        print('Saving...')
+                        shutil.copytree(game_dir + r'\save00', saves_dir + '\\' + save_name)
+                        print('Done!')
 
             elif scenario in ('l', 'd'):
-                if index_buffer > 0:
-                    save_index = index_buffer
+                save_index = None
+                if buffer == '':
+                    buffer = input('Select the save index ' + ('(or "all")' if scenario == 'd' else '') + ' >> ')
+                if buffer.isdecimal():
+                    save_index = int(buffer)
+                    buffer = None
+                    if not 0 < save_index <= len(saves):
+                        print('Error: Incorrect index')
+                        continue
+                elif scenario == 'd' and buffer in ('a', 'al', 'all'):
+                    buffer = 'all'
                 else:
-                    save_index_correct = False
-                    while not save_index_correct:
-                        save_index = int(input('Select the save index >> '))
-                        if 0 < save_index <= len(saves):
-                            save_index_correct = True
-                        else:
-                            print('Error: Incorrect index')
+                    print('Error: Incorrect index')
+                    continue
+
                 if scenario == 'l':
                     shutil.rmtree(game_dir + r'\save00')
                     shutil.copytree(saves_dir + '\\' + saves[save_index - 1], game_dir + r'\save00')
                 if scenario == 'd':
-                    shutil.rmtree(saves_dir + '\\' + saves[save_index - 1])
+                    if buffer == 'all':
+                        for save in saves:
+                            shutil.rmtree(saves_dir + '\\' + save)
+                    else:
+                        if save_index == -1:
+                            for save in saves:
+                                shutil.rmtree(saves_dir + '\\' + save)
+                        else:
+                            shutil.rmtree(saves_dir + '\\' + saves[save_index - 1])
 
             print('\nDone!\n\n')
 
