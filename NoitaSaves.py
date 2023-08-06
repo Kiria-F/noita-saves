@@ -130,6 +130,8 @@ while scenario != 'e':
                 continue
             else:
                 print('Saving...')
+                if not os.path.exists(game_dir + r'\save00'):
+                    os.mkdir(game_dir + r'\save00')
                 shutil.copytree(game_dir + r'\save00', saves_dir + '\\' + save_name)
 
         elif scenario in ('l', 'd'):
