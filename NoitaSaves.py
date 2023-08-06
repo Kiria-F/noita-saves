@@ -77,7 +77,6 @@ while scenario != 'e':
     print('\n\nSaves:')
     saves = [(save, os.path.getctime(saves_dir + '\\' + save)) for save in os.listdir(saves_dir)]
     saves.sort(key=lambda s: s[1])
-    # printing_saves = [save.replace('_', ' ') for save in saves]
     for index, (save, creation_time) in enumerate(saves):
         printing_save = save.replace('_', ' ')
         print('#', index + 1,
@@ -152,18 +151,18 @@ while scenario != 'e':
             if scenario == 'l':
                 if os.path.exists(game_dir + r'\save00'):
                     shutil.rmtree(game_dir + r'\save00')
-                shutil.copytree(saves_dir + '\\' + saves[save_index - 1], game_dir + r'\save00')
+                shutil.copytree(saves_dir + '\\' + saves[save_index - 1][0], game_dir + r'\save00')
 
             elif scenario == 'd':
                 if buffer == 'all':
-                    for save in saves:
+                    for (save, _) in saves:
                         shutil.rmtree(saves_dir + '\\' + save)
                 else:
                     if save_index == -1:
-                        for save in saves:
+                        for (save, _) in saves:
                             shutil.rmtree(saves_dir + '\\' + save)
                     else:
-                        shutil.rmtree(saves_dir + '\\' + saves[save_index - 1])
+                        shutil.rmtree(saves_dir + '\\' + saves[save_index - 1][0])
 
         print('\nDone!')
 
