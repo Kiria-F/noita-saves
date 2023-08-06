@@ -16,7 +16,8 @@ if (version.major, version.minor) != (3, 11):
 | You are using Python {version} |
 | Python 3.11 is recommended        |
 | Some features may be unavailable  |
-+-----------------------------------+'''.format(version=version))
++-----------------------------------+
+'''.format(version=version))
 
 shortcuts_enabled = True
 try:
@@ -25,9 +26,9 @@ except ImportError:
     anyAlert = True
     shortcuts_enabled = False
     print('''| Module win32com not found         |
-| Shortcut feature is unavailable   |
-+-----------------------------------+
-''')
+             | Shortcut feature is unavailable   |
+             +-----------------------------------+
+             ''')
 
 if anyAlert:
     input('Press Enter to continue...')
