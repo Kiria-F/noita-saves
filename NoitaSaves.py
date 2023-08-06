@@ -1,8 +1,20 @@
 import sys
 import os
+import time
 import shutil
 import re
 import importlib as imp
+
+
+def get_folder_size(path: str):
+    total_size = 0
+    for dirPath, dirNames, filenames in os.walk(path):
+        for f in filenames:
+            fp = os.path.join(dirPath, f)
+            if not os.path.islink(fp):
+                total_size += os.path.getsize(fp)
+    return total_size
+
 
 anyAlert = False
 version = sys.version_info
@@ -57,10 +69,21 @@ while scenario != 'e':
         error_message = ''
 
     print('\n\nSaves:')
-    saves = os.listdir(saves_dir)
-    printing_saves = [save.replace('_', ' ') for save in saves]
-    for index, save in enumerate(printing_saves):
-        print('#', index + 1, ' ' if index < 9 else '', ' >> ', save, sep='')
+    saves = [(save, os.path.getctime(saves_dir + '\\' + save)) for save in os.listdir(saves_dir)]
+    # printing_saves = [save.replace('_', ' ') for save in saves]
+    for index, (save, creation_time) in enumerate(saves):
+        printing_save = save.replace('_', ' ')
+        print('#', index + 1,
+              ' ' if index < 9 else '',
+              ' >> ', printing_save, ' [',
+              ' '.join(
+                  time.ctime(creation_time)
+                  .replace('  ', ' ')
+                  .split(' ')[1:4]),
+              ' | ',
+              '{:1.2f}'.format(get_folder_size(saves_dir + '\\' + save) / 1000 / 1000), ' Mb',
+              ']',
+              sep='')
     if len(saves) == 0:
         print('<< Nothing >>')
     print()
