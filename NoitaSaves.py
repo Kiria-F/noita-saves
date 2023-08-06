@@ -65,8 +65,9 @@ while scenario != 'e':
         print('''Welcome to NoitaSaves!\n
  > To make a save, you should save and quit the game
  > You also need to close Noita before loading a save
+ > Do not load a save during Steam sync
  > If the selected save has not loaded, just load it one more time
-   (It can happen due to steam sync)
+   (It may happen due to steam sync)
  > You can also create a shortcut for NoitaSaves on your start menu or desktop
    (Check github page for more info: https://github.com/Sedo-KFM/NoitaSaves)''')
 
@@ -97,12 +98,12 @@ while scenario != 'e':
     scenario_correct = False
     buffer = ''
     while not scenario_correct:
-        scenario = input('Save (S) | Load (L) | Delete (D) | Exit (E) >> ').lower().replace(' ', '')
+        scenario = input('Save (S) | Load (L) | Delete (D) | Exit (E) >> ').lower().strip()
         if scenario == '':
             continue
         if scenario[0] in ('s', 'l', 'd', 'e'):
-            buffer = scenario[1:]
             scenario = scenario[0]
+            buffer = scenario[1:].strip()
         if scenario in ('s', 'l', 'd', 'e', 'cs-d', 'cs-w', 'rs-d', 'rs-w'):
             scenario_correct = True
         else:
