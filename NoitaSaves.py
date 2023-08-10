@@ -79,19 +79,29 @@ while scenario != 'e':
     print('\n\nSaves:')
     saves = [(save, os.path.getctime(saves_dir + '\\' + save)) for save in os.listdir(saves_dir)]
     saves.sort(key=lambda s: s[1])
-
+    current_save_size = get_folder_size(current_save)
     for (index, (save, creation_time)) in enumerate(saves):
+        is_equal_to_current = False
+        save_size = get_folder_size(saves_dir + '\\' + save)
+        if save_size == current_save_size:
+            dir_cmp_result = dircmp(current_save, saves_dir + '\\' + save)
+            if len(dir_cmp_result.diff_files) == 0:
+                is_equal_to_current = True
         printing_save = save.replace('_', ' ')
-        print('#', index + 1,
+        print('\033[1m\033[92m' if is_equal_to_current else '',
+              '#', index + 1,
               ' ' if index < 9 else '',
-              ' >> ', printing_save, '  [',
+              ' >> ', printing_save,
+              '' if is_equal_to_current else '\033[0m\033[90m',
+              '  [',
               ' '.join(
                   time.ctime(creation_time)
                   .replace('  ', ' ')
                   .split(' ')[1:4]),
               ' | ',
-              '{:1.2f}'.format(get_folder_size(saves_dir + '\\' + save) / 1000 / 1000), ' Mb',
+              '{:1.2f}'.format(save_size / 1000 / 1000), ' Mb',
               ']',
+              '\033[0m',
               sep='')
     if len(saves) == 0:
         print('<< Nothing >>')
@@ -161,6 +171,7 @@ while scenario != 'e':
                 shutil.copytree(saves_dir + '\\' + saves[save_index - 1][0], current_save)
 
             elif scenario == 'd':
+                print('Deleting...')
                 if buffer == 'all':
                     for (save, _) in saves:
                         shutil.rmtree(saves_dir + '\\' + save)
