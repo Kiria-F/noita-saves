@@ -147,6 +147,9 @@ while scenario != 'e':
                 shutil.copytree(current_save, saves_dir + '\\' + save_name)
 
         elif scenario in ('l', 'd'):
+            if len(saves) == 0:
+                error_message = 'Nothing to ' + ('load' if scenario == 'l' else 'delete')
+                continue
             save_index = None
             if buffer == '':
                 buffer = input('Select the save index ' +
@@ -162,9 +165,6 @@ while scenario != 'e':
                 buffer = 'all'
             elif scenario == 'l' and buffer in ('l', 'last'):
                 save_index = len(saves)
-                if save_index == 0:
-                    error_message = 'Nothing to load'
-                    continue
             else:
                 error_message = 'Incorrect index'
                 continue
