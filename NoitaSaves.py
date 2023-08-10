@@ -47,15 +47,6 @@ if anyAlert:
     input('Press Enter to continue...')
     print('\n')
 
-filename = os.path.basename(__file__).removesuffix('.py')
-appdata = os.getenv('APPDATA')
-appdata = appdata.replace('Roaming', 'LocalLow')
-game_dir = appdata + r'\Nolla_Games_Noita'
-saves_dir = appdata + r'\Nolla_Games_Noita_Saves'
-
-if not os.path.exists(saves_dir):
-    os.mkdir(saves_dir)
-
 print('''Welcome to NoitaSaves!\n
  > To make a save, you should save and quit the game
  > You also need to close Noita before loading a save
@@ -64,6 +55,16 @@ print('''Welcome to NoitaSaves!\n
    (It may happen due to steam sync)
  > You can also create a shortcut for NoitaSaves on your start menu or desktop
    (Check github page for more info: https://github.com/Sedo-KFM/NoitaSaves)''')
+
+filename = os.path.basename(__file__).removesuffix('.py')
+appdata = os.getenv('APPDATA')
+appdata = appdata.replace('Roaming', 'LocalLow')
+game_dir = appdata + r'\Nolla_Games_Noita'
+saves_dir = appdata + r'\Nolla_Games_Noita_Saves'
+current_save = game_dir + r'\save00'
+
+if not os.path.exists(saves_dir):
+    os.mkdir(saves_dir)
 
 saves = []
 error_message = ''
@@ -78,6 +79,7 @@ while scenario != 'e':
     print('\n\nSaves:')
     saves = [(save, os.path.getctime(saves_dir + '\\' + save)) for save in os.listdir(saves_dir)]
     saves.sort(key=lambda s: s[1])
+
     for (index, (save, creation_time)) in enumerate(saves):
         printing_save = save.replace('_', ' ')
         print('#', index + 1,
@@ -129,10 +131,10 @@ while scenario != 'e':
                 continue
             else:
                 print('Saving...')
-                if not os.path.exists(game_dir + r'\save00'):
+                if not os.path.exists(current_save):
                     error_message = 'Current progress not found\nTry to load any save or start a new game'
                     continue
-                shutil.copytree(game_dir + r'\save00', saves_dir + '\\' + save_name)
+                shutil.copytree(current_save, saves_dir + '\\' + save_name)
 
         elif scenario in ('l', 'd'):
             save_index = None
@@ -154,9 +156,9 @@ while scenario != 'e':
 
             if scenario == 'l':
                 print('Loading...')
-                if os.path.exists(game_dir + r'\save00'):
-                    shutil.rmtree(game_dir + r'\save00')
-                shutil.copytree(saves_dir + '\\' + saves[save_index - 1][0], game_dir + r'\save00')
+                if os.path.exists(current_save):
+                    shutil.rmtree(current_save)
+                shutil.copytree(saves_dir + '\\' + saves[save_index - 1][0], current_save)
 
             elif scenario == 'd':
                 if buffer == 'all':
