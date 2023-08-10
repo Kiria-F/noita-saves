@@ -4,6 +4,7 @@ import time
 import shutil
 import re
 import importlib as imp
+from filecmp import dircmp
 
 
 def get_folder_size(path: str):
@@ -55,14 +56,7 @@ saves_dir = appdata + r'\Nolla_Games_Noita_Saves'
 if not os.path.exists(saves_dir):
     os.mkdir(saves_dir)
 
-saves = []
-error_message = ''
-scenario = 'Init'
-first_time = True
-while scenario != 'e':
-    if first_time:
-        first_time = False
-        print('''Welcome to NoitaSaves!\n
+print('''Welcome to NoitaSaves!\n
  > To make a save, you should save and quit the game
  > You also need to close Noita before loading a save
  > Do not load a save during Steam sync
@@ -70,6 +64,12 @@ while scenario != 'e':
    (It may happen due to steam sync)
  > You can also create a shortcut for NoitaSaves on your start menu or desktop
    (Check github page for more info: https://github.com/Sedo-KFM/NoitaSaves)''')
+
+saves = []
+error_message = ''
+scenario = 'Init'
+
+while scenario != 'e':
 
     if error_message != '':
         input('\nError: ' + error_message + '\nPress Enter...')
