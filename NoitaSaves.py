@@ -134,6 +134,9 @@ while scenario != 'e':
             continue
 
         if scenario == 's':
+            if not os.path.exists(current_save):
+                error_message = 'Current progress not found\nTry to load any save or start a new game'
+                continue
             if buffer == '':
                 save_name = input('Input save name >> ')
             else:
@@ -148,9 +151,6 @@ while scenario != 'e':
                 continue
             else:
                 print('Saving...')
-                if not os.path.exists(current_save):
-                    error_message = 'Current progress not found\nTry to load any save or start a new game'
-                    continue
                 shutil.copytree(current_save, saves_dir + '\\' + save_name)
 
         elif scenario in ('l', 'd'):
