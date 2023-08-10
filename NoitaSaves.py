@@ -137,15 +137,17 @@ while scenario != 'e':
         elif scenario in ('l', 'd'):
             save_index = None
             if buffer == '':
-                buffer = input('Select the save index ' + ('(or "all")' if scenario == 'd' else '') + ' >> ')
+                buffer = input('Select the save index ' + ('(or "a/all")' if scenario == 'd' else '(or l/last)') + ' >> ')
             if buffer.isdecimal():
                 save_index = int(buffer)
                 buffer = None
                 if not 0 < save_index <= len(saves):
                     error_message = 'Incorrect index'
                     continue
-            elif scenario == 'd' and buffer in ('a', 'al', 'all'):
+            elif scenario == 'd' and buffer in ('a', 'all'):
                 buffer = 'all'
+            elif scenario == 'l' and buffer in ('l', 'last'):
+                save_index = len(saves)
             else:
                 error_message = 'Incorrect index'
                 continue
