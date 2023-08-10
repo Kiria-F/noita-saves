@@ -50,11 +50,13 @@ if anyAlert:
 print('''Welcome to NoitaSaves!\n
  > To make a save, you should save and quit the game
  > You also need to close Noita before loading a save
- > Do not load a save during Steam sync
+ \033[93m> Do not load a save during Steam sync! It may corrupt the save!\033[0m
  > If the selected save has not loaded, just load it one more time
    (It may happen due to steam sync)
  > You can also create a shortcut for NoitaSaves on your start menu or desktop
-   (Check github page for more info: https://github.com/Sedo-KFM/NoitaSaves)''')
+   (Check github page for more info: \033[94mhttps://github.com/Sedo-KFM/NoitaSaves\033[0m)
+
+''')
 
 filename = os.path.basename(__file__).removesuffix('.py')
 appdata = os.getenv('APPDATA')
@@ -69,14 +71,19 @@ if not os.path.exists(saves_dir):
 saves = []
 error_message = ''
 scenario = 'Init'
-
+first_time = True
 while scenario != 'e':
 
     if error_message != '':
-        input('\nError: ' + error_message + '\nPress Enter...')
+        input('\n\033[91mError: ' + error_message + '\033[0m\n\nPress Enter...')
         error_message = ''
 
-    print('\n\nSaves:')
+    if first_time:
+        first_time = False
+    else:
+        os.system('cls')
+
+    print('Saves:')
     saves = [(save, os.path.getctime(saves_dir + '\\' + save)) for save in os.listdir(saves_dir)]
     saves.sort(key=lambda s: s[1])
     current_save_size = get_folder_size(current_save)
@@ -110,7 +117,7 @@ while scenario != 'e':
     buffer = ''
     scenario = ''
     while scenario == '':
-        scenario = input('Save (S) | Load (L) | Delete (D) | Exit (E) >> ').lower().strip()
+        scenario = input('S (Save) | L (Load) | D (Delete) | E (Exit) >> ').lower().strip()
     if scenario[0] in ('s', 'l', 'd', 'e'):
         buffer = scenario[1:].strip()
         scenario = scenario[0]
