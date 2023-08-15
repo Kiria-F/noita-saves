@@ -39,9 +39,9 @@ except ImportError:
     anyAlert = True
     shortcuts_enabled = False
     print('''| Module win32com not found         |
-             | Shortcut feature is unavailable   |
-             +-----------------------------------+
-             ''')
+| Shortcut feature is unavailable   |
++-----------------------------------+
+''')
 
 if anyAlert:
     input('Press Enter to continue...')
