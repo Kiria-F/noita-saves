@@ -133,7 +133,7 @@ while scenario != 'e':
     if scenario[0] in ('s', 'l', 'd', 'e'):
         buffer = scenario[1:].strip()
         scenario = scenario[0]
-    if scenario in ('s', 'l', 'd', 'e', 'cs-d', 'cs-w', 'rs-d', 'rs-w'):
+    if scenario in ('s', 'l', 'd', 'e', 'cs-d', 'cs-w', 'rs-d', 'rs-w', 'r', 'run'):
         scenario_correct = True
     else:
         error_message = 'Incorrect scenario'
@@ -236,6 +236,9 @@ while scenario != 'e':
             print('\nShortcut ' + ('updated' if shortcut_removed else 'created') + '!\n\n')
         else:
             print('\nShortcut removed!\n\n')
+
+    if scenario in ('r', 'run'):
+        os.system('start steam://rungameid/881100')
 
 if len(saves) == 0:
     os.rmdir(saves_dir)
