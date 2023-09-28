@@ -17,6 +17,17 @@ def get_folder_size(path: str):
     return total_size
 
 
+ConsoleStyles = {
+    'BOLD': '\033[1m',
+    'GRAY': '\033[90m',
+    'ERROR': '\033[91m',
+    'OKGREEN': '\033[92m',
+    'WARNING': '\033[93m',
+    'OKBLUE': '\033[94m',
+    'HEADER': '\033[95m',
+    'ENDC': '\033[0m'
+}
+
 anyAlert = False
 version = sys.version_info
 if (version.major, version.minor) != (3, 11):
@@ -47,14 +58,14 @@ if anyAlert:
     input('Press Enter to continue...')
     print('\n')
 
-print('''Welcome to NoitaSaves!\n
+print(f'''Welcome to NoitaSaves!\n
  > To make a save, you should save and quit the game
  > You also need to close Noita before loading a save
- \033[93m> Do not load a save during Steam sync! It may corrupt the save!\033[0m
+ {ConsoleStyles['WARNING']} Do not load a save during Steam sync! It may corrupt the save!{ConsoleStyles['ENDC']}
  > If the selected save has not loaded, just load it one more time
    (It may happen due to steam sync)
  > You can also create a shortcut for NoitaSaves on your start menu or desktop
-   (Check github page for more info: \033[94mhttps://github.com/Sedo-KFM/NoitaSaves\033[0m)
+   (Check github page for more info: {ConsoleStyles['OKBLUE']}mhttps://github.com/Sedo-KFM/NoitaSaves{ConsoleStyles['ENDC']})
 
 ''')
 
@@ -75,7 +86,7 @@ first_time = True
 while scenario != 'e':
 
     if error_message != '':
-        input('\n\033[91mError: ' + error_message + '\033[0m\n\nPress Enter...')
+        input('\n' + ConsoleStyles['ERROR'] + 'Error: ' + error_message + ConsoleStyles['ENDC'] + '\n\nPress Enter...')
         error_message = ''
 
     if first_time:
@@ -95,11 +106,11 @@ while scenario != 'e':
             if len(dir_cmp_result.diff_files) == 0:
                 is_equal_to_current = True
         printing_save = save.replace('_', ' ')
-        print('\033[1m\033[92m' if is_equal_to_current else '',
+        print(ConsoleStyles['BOLD'] + ConsoleStyles['OKGREEN'] if is_equal_to_current else '',
               '#', index + 1,
               ' ' if index < 9 else '',
               ' >> ', printing_save,
-              '' if is_equal_to_current else '\033[0m\033[90m',
+              '' if is_equal_to_current else ConsoleStyles['ENDC'] + ConsoleStyles['GRAY'],
               '  [',
               ' '.join(
                   time.ctime(creation_time)
@@ -108,7 +119,7 @@ while scenario != 'e':
               ' | ',
               '{:1.2f}'.format(save_size / 1000 / 1000), ' Mb',
               ']',
-              '\033[0m',
+              ConsoleStyles['ENDC'],
               sep='')
     if len(saves) == 0:
         print('<< Nothing >>')
