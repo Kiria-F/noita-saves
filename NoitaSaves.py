@@ -180,6 +180,9 @@ while scenario != 'e':
                     error_message = 'Incorrect index'
                     continue
             elif scenario == 'd' and buffer in ('a', 'all'):
+                print(ConsoleStyles['WARNING'] + 'Are you sure? [Y/N]', ConsoleStyles['ENDC'])
+                if input().strip().lower() != 'y':
+                    continue
                 buffer = 'all'
             elif scenario == 'l' and buffer in ('l', 'last'):
                 save_index = len(saves)
