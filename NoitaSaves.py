@@ -129,7 +129,7 @@ while scenario != 'e':
     buffer = ''
     scenario = ''
     while scenario == '':
-        scenario = input('S (Save) | L (Load) | D (Delete) | E (Exit) >> ').lower().strip()
+        scenario = input('S (Save) | L (Load) | R (Run) | D (Delete) | E (Exit) >> ').lower().strip()
     if scenario[0] in ('s', 'l', 'd', 'e'):
         buffer = scenario[1:].strip()
         scenario = scenario[0]
@@ -233,9 +233,9 @@ while scenario != 'e':
             shortcut.IconLocation = os.getcwd() + '\\' + filename + '.ico'
             shortcut.WorkingDirectory = os.getcwd()
             shortcut.save()
-            print('\nShortcut ' + ('updated' if shortcut_removed else 'created') + '!\n\n')
+            print('\nShortcut ' + ('updated' if shortcut_removed else 'created') + '!')
         else:
-            print('\nShortcut removed!\n\n')
+            print('\nShortcut removed!')
 
     if scenario in ('r', 'run'):
         os.system('start steam://rungameid/881100')
