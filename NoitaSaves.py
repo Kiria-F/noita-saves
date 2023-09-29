@@ -19,16 +19,16 @@ def get_folder_size(path: str):
     return total_size
 
 
-ConsoleStyles = {
-    'BOLD': '\033[1m',
-    'GRAY': '\033[90m',
-    'ERROR': '\033[91m',
-    'OKGREEN': '\033[92m',
-    'WARNING': '\033[93m',
-    'OKBLUE': '\033[94m',
-    'HEADER': '\033[95m',
-    'ENDC': '\033[0m'
-}
+class ConsoleStyles:
+    BOLD = '\033[1m'
+    GRAY = '\033[90m'
+    ERROR = '\033[91m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    OKBLUE = '\033[94m'
+    HEADER = '\033[95m'
+    ENDC = '\033[0m'
+
 
 anyAlert = False
 version = sys.version_info
@@ -63,11 +63,11 @@ if anyAlert:
 print(f'''Welcome to NoitaSaves!\n
  > To make a save, you should save and quit the game
  > You also need to close Noita before loading a save
- {ConsoleStyles['WARNING']} Do not load a save during Steam sync! It may corrupt the save!{ConsoleStyles['ENDC']}
+   {ConsoleStyles.WARNING}Do not load a save during Steam sync! It may corrupt the save!{ConsoleStyles.ENDC}
  > If the selected save has not loaded, just load it one more time
    (It may happen due to steam sync)
  > You can also create a shortcut for NoitaSaves on your start menu or desktop
-   (Check github page for more info: {ConsoleStyles['OKBLUE']}mhttps://github.com/Sedo-KFM/NoitaSaves{ConsoleStyles['ENDC']})''')
+   (Check github page for more info: {ConsoleStyles.OKBLUE}https://github.com/Sedo-KFM/NoitaSaves{ConsoleStyles.ENDC})''')
 
 filename = os.path.basename(__file__).removesuffix('.py')
 appdata = os.getenv('APPDATA')
@@ -86,7 +86,7 @@ first_time = True
 while scenario != 'e':
 
     if error_message != '':
-        input('\n' + ConsoleStyles['ERROR'] + 'Error: ' + error_message + ConsoleStyles['ENDC'] + '\n\nPress Enter...')
+        input('\n' + ConsoleStyles.ERROR + 'Error: ' + error_message + ConsoleStyles.ENDC + '\n\nPress Enter...')
         error_message = ''
 
     if CLEAR_SCREEN:
@@ -107,11 +107,11 @@ while scenario != 'e':
             if len(dir_cmp_result.diff_files) == 0:
                 is_equal_to_current = True
         printing_save = save.replace('_', ' ')
-        print(ConsoleStyles['BOLD'] + ConsoleStyles['OKGREEN'] if is_equal_to_current else '',
+        print(ConsoleStyles.BOLD + ConsoleStyles.OKGREEN if is_equal_to_current else '',
               '#', index + 1,
               ' ' if index < 9 else '',
               ' >> ', printing_save,
-              '' if is_equal_to_current else ConsoleStyles['ENDC'] + ConsoleStyles['GRAY'],
+              '' if is_equal_to_current else ConsoleStyles.ENDC + ConsoleStyles.GRAY,
               '  [',
               ' '.join(
                   time.ctime(creation_time)
@@ -120,7 +120,7 @@ while scenario != 'e':
               ' | ',
               '{:1.2f}'.format(save_size / 1000 / 1000), ' Mb',
               ']',
-              ConsoleStyles['ENDC'],
+              ConsoleStyles.ENDC,
               sep='')
     if len(saves) == 0:
         print('<< Nothing >>')
@@ -181,7 +181,7 @@ while scenario != 'e':
                     error_message = 'Incorrect index'
                     continue
             elif scenario == 'd' and buffer in ('a', 'all'):
-                print(ConsoleStyles['WARNING'] + 'Are you sure? [Y/N]', ConsoleStyles['ENDC'], end=' >> ')
+                print(ConsoleStyles.WARNING + 'Are you sure? [Y/N]', ConsoleStyles.ENDC, end=' >> ')
                 if input().strip().lower() != 'y':
                     continue
                 buffer = 'all'
