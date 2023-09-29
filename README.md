@@ -3,6 +3,7 @@
 ![NoitaSaves](https://user-images.githubusercontent.com/57474004/236513513-8b9a8457-9662-4c75-91e8-a416d5a7a8a2.png)
 
 ---
+## Main functions:
 ### To make a save:
 - Quit the game
 - Open NoitaSaves and enter "S" (Save)
@@ -11,6 +12,7 @@
 
 ### To load a save:
 - Quit the game
+- __Wait for finish of Steam sync__ (if it's enabled)
 - Open NoitaSaves, enter "L" (Load)
 - Choose the save's index
 
@@ -22,15 +24,19 @@
 
 > You can also input a full command one-line, for example: "L 4", "d2" or "s my save"
 
-### Now you can also create a shortcut for NoitaSaves on your desktop and in the Start menu!
+## Also:
+### You can launch Noita directly from NoitaSaves
+Just enter "R" (Run)
+
+### You can create a shortcut for NoitaSaves on your desktop and in the Start menu
 (These commands are not displayed in the application because they are rarely used)
 
 | Command | Action                                       |
 |---------|----------------------------------------------|
 | CS-D    | Create/update the shortcut on the desktop    |
 | CS-W    | Create/update the shortcut in the Start menu |
-| RS-D    | Delete the shortcut from the desktop         |
-| RS-W    | Delete the shortcut from the Start menu      |
+| RS-D    | Remove the shortcut from the desktop         |
+| RS-W    | Remove the shortcut from the Start menu      |
 
 > Python 3.11 is required  
 > 
@@ -40,6 +46,7 @@
 > You can download Python from the official site: www.python.org
 
 ---
+## Основные функции:
 ### Чтобы создать сейв:
 - Выйдите из игры с сохранением
 - Откройте NoitaSaves, введите "S" (Save)
@@ -48,6 +55,7 @@
 
 ### Чтобы загрузить сейв:
 - Выйдите из игры
+- __Дождитесь окончания синхронизации Steam__ (если она включена)
 - Откройте NoitaSaves, введите "L" (Load)
 - Выберите номер сохранения
 
@@ -59,15 +67,19 @@
 
 > Также можно вводить полную команду в одну строку, например "L 4", "d2" или "s my save"
 
-### Также теперь можно сделать ярлык для NoitaSaves на рабочем столе и в меню Пуск!
+## Также:
+### Можно запустить Noita прямо из NoitaSaves
+Просто введите "R" (Run)
+
+### Можно сделать ярлык для NoitaSaves на рабочем столе и в меню Пуск
 (Эти команды не отображаются в самом приложении, так как редко используются)
 
 | Команда | Действие                                |
 |---------|-----------------------------------------|
 | CS-D    | Создать/обновить ярлык на рабочем столе |
 | CS-W    | Создать/обновить ярлык в меню Пуск      |
-| RS-D    | Удалить ярлык с рабочего стола          |
-| RS-W    | Удалить ярлык из меню Пуск              |
+| RS-D    | Убрать ярлык с рабочего стола           |
+| RS-W    | Убрать ярлык из меню Пуск               |
 
 > Для запуска требуется Python 3.11  
 > 
