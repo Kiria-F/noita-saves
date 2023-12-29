@@ -70,6 +70,7 @@ print(f'''Welcome to NoitaSaves!\n
    (Check github page for more info: {ConsoleStyles.OKBLUE}https://github.com/Sedo-KFM/NoitaSaves{ConsoleStyles.ENDC})''')
 
 filename = os.path.basename(__file__).removesuffix('.py')
+info_file_name = '.noita_saves_info'
 appdata = os.getenv('APPDATA')
 appdata = appdata.replace('Roaming', 'LocalLow')
 game_dir = appdata + r'\Nolla_Games_Noita'
@@ -101,7 +102,13 @@ while scenario != 'e':
     current_save_size = get_folder_size(current_save)
     for (index, (save, creation_time)) in enumerate(saves):
         is_equal_to_current = False
-        save_size = get_folder_size(saves_dir + '\\' + save)
+        if info_file_name in os.listdir(saves_dir + '\\' + save):
+            with open(saves_dir + '\\' + save + '\\' + info_file_name, 'r') as info_file:
+                save_size = int(info_file.readline())
+        else:
+            save_size = get_folder_size(saves_dir + '\\' + save)
+            with open(saves_dir + '\\' + save + '\\' + info_file_name, 'w') as info_file:
+                info_file.write(str(save_size))
         if save_size == current_save_size:
             dir_cmp_result = dircmp(current_save, saves_dir + '\\' + save)
             if len(dir_cmp_result.diff_files) == 0:
@@ -163,7 +170,10 @@ while scenario != 'e':
                 continue
             else:
                 print('Saving...')
-                shutil.copytree(current_save, saves_dir + '\\' + save_name)
+                dirname = saves_dir + '\\' + save_name
+                shutil.copytree(current_save, dirname)
+                with open(dirname + '\\' + info_file_name, 'w', encoding='utf-8') as info_file:
+                    info_file.write(str(get_folder_size(dirname)))
 
         elif scenario in ('l', 'd'):
             if len(saves) == 0:
