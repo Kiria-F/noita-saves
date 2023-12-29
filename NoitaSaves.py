@@ -206,6 +206,8 @@ while scenario != 'e':
                 if os.path.exists(current_save):
                     shutil.rmtree(current_save)
                 shutil.copytree(saves_dir + '\\' + saves[save_index - 1][0], current_save)
+                if info_file_name in os.listdir(current_save):
+                    os.remove(current_save + '\\' + info_file_name)
 
             elif scenario == 'd':
                 print('Deleting...')
