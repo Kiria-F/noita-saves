@@ -22,11 +22,11 @@
 
 > You can input commands in lower-case
 
-> You can also input a full command one-line, for example: "L 4", "d2" or "s my save"
+> You can also input a full command one-line, for example: "L 4", "d 2" or "s my save"
 
 ## Also:
 ### You can launch Noita directly from NoitaSaves
-Just enter "R" (Run)
+Just enter "P" (Play)
 
 ### You can create a shortcut for NoitaSaves on your desktop and in the Start menu
 (These commands are not displayed in the application because they are rarely used)
@@ -65,11 +65,11 @@ Just enter "R" (Run)
 
 > Команды можно вводить в нижнем регистре
 
-> Также можно вводить полную команду в одну строку, например "L 4", "d2" или "s my save"
+> Также можно вводить полную команду в одну строку, например "L 4", "d 2" или "s my save"
 
 ## Также:
 ### Можно запустить Noita прямо из NoitaSaves
-Просто введите "R" (Run)
+Просто введите "P" (Play)
 
 ### Можно сделать ярлык для NoitaSaves на рабочем столе и в меню Пуск
 (Эти команды не отображаются в самом приложении, так как редко используются)

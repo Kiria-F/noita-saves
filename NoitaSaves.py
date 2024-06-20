@@ -82,9 +82,9 @@ if not os.path.exists(saves_dir):
 
 saves = []
 error_message = ''
-scenario = 'Init'
+command = ''
 first_time = True
-while scenario != 'e':
+while command != 'e':
 
     if error_message != '':
         input('\n' + ConsoleStyles.ERROR + 'Error: ' + error_message + ConsoleStyles.ENDC + '\n\nPress Enter...')
@@ -133,33 +133,27 @@ while scenario != 'e':
         print('<< Nothing >>')
     print()
 
-    buffer = ''
-    scenario = ''
-    while scenario == '':
-        scenario = input('S (Save) | L (Load) | R (Run) | D (Delete) | E (Exit) >> ').lower().strip()
-    if scenario[0] in ('s', 'l', 'd', 'e'):
-        buffer = scenario[1:].strip()
-        scenario = scenario[0]
-    if scenario in ('s', 'l', 'd', 'e', 'cs-d', 'cs-w', 'rs-d', 'rs-w', 'r', 'run'):
-        scenario_correct = True
-    else:
-        error_message = 'Incorrect scenario'
-        continue
+    parameter = ''
+    user_input = input('S (Save) | L (Load) | P (Play) | D (Delete) | E (Exit) >> ').lower().strip().split(maxsplit=1)
+    if len(user_input) > 0:
+        command = user_input[0]
+    if len(user_input) > 1:
+        parameter = user_input[1]
 
-    if scenario in ('s', 'l', 'd'):
+    if command in ('l', 's', 'd'):  # :D
 
         if not os.path.exists(game_dir):
             error_message = 'Game files not found'
             continue
 
-        if scenario == 's':
+        if command == 's':
             if not os.path.exists(current_save):
                 error_message = 'Current progress not found\nTry to load any save or start a new game'
                 continue
-            if buffer == '':
+            if parameter == '':
                 save_name = input('Input save name >> ')
             else:
-                save_name = buffer
+                save_name = parameter
             save_name_errors = set(re.findall(r'[^A-Za-zА-Яа-я0-9\- ]', save_name))
             if len(save_name_errors) > 0:
                 error_message = 'Incorrect symbols: [' + '], ['.join(save_name_errors) + ']'
@@ -175,33 +169,33 @@ while scenario != 'e':
                 with open(dirname + '\\' + info_file_name, 'w', encoding='utf-8') as info_file:
                     info_file.write(str(get_folder_size(dirname)))
 
-        elif scenario in ('l', 'd'):
+        elif command in ('l', 'd'):
             if len(saves) == 0:
-                error_message = 'Nothing to ' + ('load' if scenario == 'l' else 'delete')
+                error_message = 'Nothing to ' + ('load' if command == 'l' else 'delete')
                 continue
             save_index = None
-            if buffer == '':
-                buffer = input('Select the save index ' +
-                               ('(or "a/all")' if scenario == 'd' else '(or l/last)') +
-                               ' >> ')
-            if buffer.isdecimal():
-                save_index = int(buffer)
-                buffer = None
+            if parameter == '':
+                parameter = input('Select the save index ' +
+                                  ('(or "a/all")' if command == 'd' else '(or l/last)') +
+                                  ' >> ')
+            if parameter.isdecimal():
+                save_index = int(parameter)
+                parameter = None
                 if not 0 < save_index <= len(saves):
                     error_message = 'Incorrect index'
                     continue
-            elif scenario == 'd' and buffer in ('a', 'all'):
+            elif command == 'd' and parameter in ('a', 'all'):
                 print(ConsoleStyles.WARNING + 'Are you sure? [Y/N]', ConsoleStyles.ENDC, end=' >> ')
                 if input().strip().lower() != 'y':
                     continue
-                buffer = 'all'
-            elif scenario == 'l' and buffer in ('l', 'last'):
+                parameter = 'all'
+            elif command == 'l' and parameter in ('l', 'last'):
                 save_index = len(saves)
             else:
                 error_message = 'Incorrect index'
                 continue
 
-            if scenario == 'l':
+            if command == 'l':
                 print('Loading...')
                 if os.path.exists(current_save):
                     shutil.rmtree(current_save)
@@ -209,9 +203,9 @@ while scenario != 'e':
                 if info_file_name in os.listdir(current_save):
                     os.remove(current_save + '\\' + info_file_name)
 
-            elif scenario == 'd':
+            elif command == 'd':
                 print('Deleting...')
-                if buffer == 'all':
+                if parameter == 'all':
                     for (save, _) in saves:
                         shutil.rmtree(saves_dir + '\\' + save)
                 else:
@@ -223,14 +217,14 @@ while scenario != 'e':
 
         print('\nDone!')
 
-    if scenario in ('cs-d', 'cs-w', 'rs-d', 'rs-w'):
+    elif command in ('cs-d', 'cs-w', 'rs-d', 'rs-w'):
         if not shortcuts_enabled:
             error_message = 'Shortcut feature is disabled'
             continue
 
-        if '-d' in scenario:
+        if '-d' in command:
             shortcut_path = os.getenv('USERPROFILE') + r'\Desktop'
-        elif '-w' in scenario:
+        elif '-w' in command:
             shortcut_path = os.getenv('APPDATA') + r'\Microsoft\Windows\Start Menu\Programs'
         shortcut_path += '\\' + filename + '.lnk'
         shortcut_removed = False
@@ -238,7 +232,7 @@ while scenario != 'e':
             os.remove(shortcut_path)
             shortcut_removed = True
 
-        if 'cs' in scenario:
+        if 'cs' in command:
             shell = win32com_client.Dispatch("WScript.Shell")
             shortcut = shell.CreateShortCut(shortcut_path)
             shortcut.Targetpath = os.getcwd() + '\\' + filename + '.py'
@@ -249,8 +243,12 @@ while scenario != 'e':
         else:
             print('\nShortcut removed!')
 
-    if scenario in ('r', 'run'):
+    elif command == 'p':
         os.system('start steam://rungameid/881100')
+
+    else:
+        if len(command) > 0:
+            error_message = 'Incorrect command'
 
 if len(saves) == 0:
     os.rmdir(saves_dir)
