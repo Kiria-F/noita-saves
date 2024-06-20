@@ -69,22 +69,22 @@ print(f'''Welcome to NoitaSaves!\n
  > You can also create a shortcut for NoitaSaves on your start menu or desktop
    (Check github page for more info: {ConsoleStyles.OKBLUE}https://github.com/Sedo-KFM/NoitaSaves{ConsoleStyles.ENDC})''')
 
-filename = os.path.basename(__file__).removesuffix('.py')
-info_file_name = '.noita_saves_info'
-appdata = os.getenv('APPDATA')
-appdata = appdata.replace('Roaming', 'LocalLow')
-game_dir = appdata + r'\Nolla_Games_Noita'
-saves_dir = appdata + r'\Nolla_Games_Noita_Saves'
-current_save = game_dir + r'\save00'
+FILENAME = str(os.path.basename(__file__).removesuffix('.py'))
+INFO_FILE_NAME = '.noita_saves_info'
+APPDATA = os.getenv('APPDATA')
+APPDATA = APPDATA.replace('Roaming', 'LocalLow')
+GAME_DIR = APPDATA + r'\Nolla_Games_Noita'
+SAVES_DIR = APPDATA + r'\Nolla_Games_Noita_Saves'
+CURRENT_SAVE = GAME_DIR + r'\save00'
 
-if not os.path.exists(saves_dir):
-    os.mkdir(saves_dir)
+if not os.path.exists(SAVES_DIR):
+    os.mkdir(SAVES_DIR)
 
 saves = []
 error_message = ''
 command = ''
 first_time = True
-while command != 'e':
+while command != 'q':
 
     if error_message != '':
         input('\n' + ConsoleStyles.ERROR + 'Error: ' + error_message + ConsoleStyles.ENDC + '\n\nPress Enter...')
@@ -97,20 +97,20 @@ while command != 'e':
             os.system('cls')
 
     print('\n\nSaves:')
-    saves = [(save, os.path.getctime(saves_dir + '\\' + save)) for save in os.listdir(saves_dir)]
+    saves = [(save, os.path.getctime(SAVES_DIR + '\\' + save)) for save in os.listdir(SAVES_DIR)]
     saves.sort(key=lambda s: s[1])
-    current_save_size = get_folder_size(current_save)
+    current_save_size = get_folder_size(CURRENT_SAVE)
     for (index, (save, creation_time)) in enumerate(saves):
         is_equal_to_current = False
-        if info_file_name in os.listdir(saves_dir + '\\' + save):
-            with open(saves_dir + '\\' + save + '\\' + info_file_name, 'r') as info_file:
+        if INFO_FILE_NAME in os.listdir(SAVES_DIR + '\\' + save):
+            with open(SAVES_DIR + '\\' + save + '\\' + INFO_FILE_NAME, 'r') as info_file:
                 save_size = int(info_file.readline())
         else:
-            save_size = get_folder_size(saves_dir + '\\' + save)
-            with open(saves_dir + '\\' + save + '\\' + info_file_name, 'w') as info_file:
+            save_size = get_folder_size(SAVES_DIR + '\\' + save)
+            with open(SAVES_DIR + '\\' + save + '\\' + INFO_FILE_NAME, 'w') as info_file:
                 info_file.write(str(save_size))
         if save_size == current_save_size:
-            dir_cmp_result = dircmp(current_save, saves_dir + '\\' + save)
+            dir_cmp_result = dircmp(CURRENT_SAVE, SAVES_DIR + '\\' + save)
             if len(dir_cmp_result.diff_files) == 0:
                 is_equal_to_current = True
         printing_save = save.replace('_', ' ')
@@ -134,7 +134,7 @@ while command != 'e':
     print()
 
     parameter = ''
-    user_input = input('S (Save) | L (Load) | P (Play) | D (Delete) | E (Exit) >> ').lower().strip().split(maxsplit=1)
+    user_input = input('S (Save) | L (Load) | P (Play) | D (Delete) | Q (Quit) >> ').lower().strip().split(maxsplit=1)
     if len(user_input) > 0:
         command = user_input[0]
     if len(user_input) > 1:
@@ -142,12 +142,12 @@ while command != 'e':
 
     if command in ('l', 's', 'd'):  # :D
 
-        if not os.path.exists(game_dir):
+        if not os.path.exists(GAME_DIR):
             error_message = 'Game files not found'
             continue
 
         if command == 's':
-            if not os.path.exists(current_save):
+            if not os.path.exists(CURRENT_SAVE):
                 error_message = 'Current progress not found\nTry to load any save or start a new game'
                 continue
             if parameter == '':
@@ -159,14 +159,14 @@ while command != 'e':
                 error_message = 'Incorrect symbols: [' + '], ['.join(save_name_errors) + ']'
                 continue
             save_name = save_name.replace(' ', '_')
-            if save_name in os.listdir(saves_dir):
+            if save_name in os.listdir(SAVES_DIR):
                 error_message = 'This save is already exists'
                 continue
             else:
                 print('Saving...')
-                dirname = saves_dir + '\\' + save_name
-                shutil.copytree(current_save, dirname)
-                with open(dirname + '\\' + info_file_name, 'w', encoding='utf-8') as info_file:
+                dirname = SAVES_DIR + '\\' + save_name
+                shutil.copytree(CURRENT_SAVE, dirname)
+                with open(dirname + '\\' + INFO_FILE_NAME, 'w', encoding='utf-8') as info_file:
                     info_file.write(str(get_folder_size(dirname)))
 
         elif command in ('l', 'd'):
@@ -197,46 +197,46 @@ while command != 'e':
 
             if command == 'l':
                 print('Loading...')
-                if os.path.exists(current_save):
-                    shutil.rmtree(current_save)
-                shutil.copytree(saves_dir + '\\' + saves[save_index - 1][0], current_save)
-                if info_file_name in os.listdir(current_save):
-                    os.remove(current_save + '\\' + info_file_name)
+                if os.path.exists(CURRENT_SAVE):
+                    shutil.rmtree(CURRENT_SAVE)
+                shutil.copytree(SAVES_DIR + '\\' + saves[save_index - 1][0], CURRENT_SAVE)
+                if INFO_FILE_NAME in os.listdir(CURRENT_SAVE):
+                    os.remove(CURRENT_SAVE + '\\' + INFO_FILE_NAME)
 
             elif command == 'd':
                 print('Deleting...')
                 if parameter == 'all':
                     for (save, _) in saves:
-                        shutil.rmtree(saves_dir + '\\' + save)
+                        shutil.rmtree(SAVES_DIR + '\\' + save)
                 else:
                     if save_index == -1:
                         for (save, _) in saves:
-                            shutil.rmtree(saves_dir + '\\' + save)
+                            shutil.rmtree(SAVES_DIR + '\\' + save)
                     else:
-                        shutil.rmtree(saves_dir + '\\' + saves[save_index - 1][0])
+                        shutil.rmtree(SAVES_DIR + '\\' + saves[save_index - 1][0])
 
         print('\nDone!')
 
-    elif command in ('cs-d', 'cs-w', 'rs-d', 'rs-w'):
+    elif command in ('sda', 'sma', 'sdr', 'smr'):
         if not shortcuts_enabled:
             error_message = 'Shortcut feature is disabled'
             continue
 
-        if '-d' in command:
+        if 'd' in command:
             shortcut_path = os.getenv('USERPROFILE') + r'\Desktop'
-        elif '-w' in command:
+        elif 'm' in command:
             shortcut_path = os.getenv('APPDATA') + r'\Microsoft\Windows\Start Menu\Programs'
-        shortcut_path += '\\' + filename + '.lnk'
+        shortcut_path += '\\' + FILENAME + '.lnk'
         shortcut_removed = False
         if os.path.exists(shortcut_path):
             os.remove(shortcut_path)
             shortcut_removed = True
 
-        if 'cs' in command:
+        if 'a' in command:
             shell = win32com_client.Dispatch("WScript.Shell")
             shortcut = shell.CreateShortCut(shortcut_path)
-            shortcut.Targetpath = os.getcwd() + '\\' + filename + '.py'
-            shortcut.IconLocation = os.getcwd() + '\\' + filename + '.ico'
+            shortcut.Targetpath = os.getcwd() + '\\' + FILENAME + '.py'
+            shortcut.IconLocation = os.getcwd() + '\\' + FILENAME + '.ico'
             shortcut.WorkingDirectory = os.getcwd()
             shortcut.save()
             print('\nShortcut ' + ('updated' if shortcut_removed else 'created') + '!')
@@ -251,4 +251,4 @@ while command != 'e':
             error_message = 'Incorrect command'
 
 if len(saves) == 0:
-    os.rmdir(saves_dir)
+    os.rmdir(SAVES_DIR)

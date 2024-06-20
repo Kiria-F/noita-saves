@@ -31,12 +31,12 @@ Just enter "P" (Play)
 ### You can create a shortcut for NoitaSaves on your desktop and in the Start menu
 (These commands are not displayed in the application because they are rarely used)
 
-| Command | Action                                       |
-|---------|----------------------------------------------|
-| CS-D    | Create/update the shortcut on the desktop    |
-| CS-W    | Create/update the shortcut in the Start menu |
-| RS-D    | Remove the shortcut from the desktop         |
-| RS-W    | Remove the shortcut from the Start menu      |
+| Command | Action                                                |
+|---------|-------------------------------------------------------|
+| SDA     | **A**dd/update the **S**hortcut on the **D**esktop    |
+| SMA     | **A**dd/update the **S**hortcut in the Start **M**enu |
+| SDR     | **R**emove the **S**hortcut from the **D**esktop      |
+| SMR     | **R**emove the **S**hortcut from the Start **M**enu   |
 
 > Python 3.11 is required  
 > 
@@ -76,10 +76,10 @@ Just enter "P" (Play)
 
 | Команда | Действие                                |
 |---------|-----------------------------------------|
-| CS-D    | Создать/обновить ярлык на рабочем столе |
-| CS-W    | Создать/обновить ярлык в меню Пуск      |
-| RS-D    | Убрать ярлык с рабочего стола           |
-| RS-W    | Убрать ярлык из меню Пуск               |
+| SDA     | Создать/обновить ярлык на рабочем столе |
+| SMA     | Создать/обновить ярлык в меню Пуск      |
+| SDR     | Убрать ярлык с рабочего стола           |
+| SMR     | Убрать ярлык из меню Пуск               |
 
 > Для запуска требуется Python 3.11  
 > 
