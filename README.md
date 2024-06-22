@@ -14,15 +14,17 @@
 - Quit the game
 - __Wait for finish of Steam sync__ (if it's enabled)
 - Open NoitaSaves, enter "L" (Load)
-- Choose the save's index
+- Choose the save's index ("L" for last)
 
 ### To delete a save:
 - Open NoitaSaves, enter "D" (Delete)
-- Choose the save's index
+- Choose the save's index ("A" for all)
 
 > You can input commands in lower-case
 
-> You can also input a full command one-line, for example: "L 4", "d 2" or "s my save"
+> You can input a full command one-line, e.g. "L 4", "d2", "s my save"
+
+> You can stick parameters to load and delete commands, e.g. "ll", "d1"
 
 ## Also:
 ### You can launch Noita directly from NoitaSaves
@@ -65,7 +67,9 @@ Just enter "P" (Play)
 
 > Команды можно вводить в нижнем регистре
 
-> Также можно вводить полную команду в одну строку, например "L 4", "d 2" или "s my save"
+> Можно вводить полную команду в одну строку, например "L 4", "d2", "s my save"
+
+> Параметр и команду удаления или загрузки можно писать слитно, например "ll", "d1"
 
 ## Также:
 ### Можно запустить Noita прямо из NoitaSaves

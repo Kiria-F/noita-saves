@@ -139,6 +139,9 @@ while command != 'q':
         command = user_input[0]
     if len(user_input) > 1:
         parameter = user_input[1]
+    if parameter == '' and command[0] in ('l', 'd'):
+        parameter = command[1:]
+        command = command[0]
 
     if command in ('l', 's', 'd'):  # :D
 
@@ -176,7 +179,7 @@ while command != 'q':
             save_index = None
             if parameter == '':
                 parameter = input('Select the save index ' +
-                                  ('(or "a/all")' if command == 'd' else '(or l/last)') +
+                                  ('(or "a" (all))' if command == 'd' else '(or "l" (last))') +
                                   ' >> ')
             if parameter.isdecimal():
                 save_index = int(parameter)
@@ -205,7 +208,7 @@ while command != 'q':
 
             elif command == 'd':
                 print('Deleting...')
-                if parameter == 'all':
+                if parameter == 'a':
                     for (save, _) in saves:
                         shutil.rmtree(SAVES_DIR + '\\' + save)
                 else:
