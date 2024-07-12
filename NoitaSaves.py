@@ -133,8 +133,11 @@ while command != 'q':
         print('<< Nothing >>')
     print()
 
+    command = ''
     parameter = ''
     user_input = input('S (Save) | L (Load) | P (Play) | D (Delete) | Q (Quit) >> ').lower().strip().split(maxsplit=1)
+    if not user_input:
+        continue
     if len(user_input) > 0:
         command = user_input[0]
     if len(user_input) > 1:
