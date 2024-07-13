@@ -18,7 +18,7 @@ SAVES_DIR = APPDATA + r'\Nolla_Games_Noita_Saves'
 CURRENT_SAVE = GAME_DIR + r'\save00'
 
 
-def get_folder_size(path: str) -> int:
+def calc_folder_size(path: str) -> int:
     total_size = 0
     for dirPath, dirNames, filenames in os.walk(path):
         for f in filenames:
@@ -28,12 +28,12 @@ def get_folder_size(path: str) -> int:
     return total_size
 
 
-def get_folder_size_from_info(path: str) -> int:
+def get_folder_size_from_info_or_recalc_new(path: str) -> int:
     if INFO_FILE_NAME in os.listdir(path):
         with open(path + '\\' + INFO_FILE_NAME, 'r') as info_file:
             return int(info_file.readline())
     else:
-        save_size = get_folder_size(path)
+        save_size = calc_folder_size(path)
         with open(path + '\\' + INFO_FILE_NAME, 'w') as info_file:
             info_file.write(str(save_size))
         return save_size
@@ -133,10 +133,10 @@ def main():
         print('\n\nSaves:')
         saves = [(save, os.path.getctime(SAVES_DIR + '\\' + save)) for save in os.listdir(SAVES_DIR)]
         saves.sort(key=lambda s: s[1])
-        current_save_size = get_folder_size(CURRENT_SAVE)
+        current_save_size = calc_folder_size(CURRENT_SAVE)
         for (index, (save, creation_time)) in enumerate(saves):
             is_equal_to_current = False
-            save_size = get_folder_size_from_info(SAVES_DIR + '\\' + save)
+            save_size = get_folder_size_from_info_or_recalc_new(SAVES_DIR + '\\' + save)
             if save_size == current_save_size:
                 dir_cmp_result = dircmp(CURRENT_SAVE, SAVES_DIR + '\\' + save)
                 if len(dir_cmp_result.diff_files) == 0:
@@ -201,11 +201,11 @@ def main():
                 else:
                     print('Saving...')
                     dirname = SAVES_DIR + '\\' + save_name
-                    target_size = get_folder_size(CURRENT_SAVE)
+                    target_size = calc_folder_size(CURRENT_SAVE)
                     run_with_progress(lambda: shutil.copytree(CURRENT_SAVE, dirname),
-                                      lambda: get_folder_size(dirname) / target_size)
+                                      lambda: calc_folder_size(dirname) / target_size)
                     with open(dirname + '\\' + INFO_FILE_NAME, 'w', encoding='utf-8') as info_file:
-                        info_file.write(str(get_folder_size(dirname)))
+                        info_file.write(str(calc_folder_size(dirname)))
 
             elif command in ('l', 'd'):
                 if len(saves) == 0:
@@ -238,9 +238,9 @@ def main():
                     if os.path.exists(CURRENT_SAVE):
                         shutil.rmtree(CURRENT_SAVE)
                     selected_save = SAVES_DIR + '\\' + saves[save_index - 1][0]
-                    target_size = get_folder_size_from_info(selected_save)
+                    target_size = get_folder_size_from_info_or_recalc_new(selected_save)
                     run_with_progress(lambda: shutil.copytree(selected_save, CURRENT_SAVE),
-                                      lambda: get_folder_size(CURRENT_SAVE) / target_size)
+                                      lambda: calc_folder_size(CURRENT_SAVE) / target_size)
                     if INFO_FILE_NAME in os.listdir(CURRENT_SAVE):
                         os.remove(CURRENT_SAVE + '\\' + INFO_FILE_NAME)
 
