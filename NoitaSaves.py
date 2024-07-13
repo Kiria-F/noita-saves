@@ -1,5 +1,6 @@
 import sys
 import os
+import threading
 import time
 import shutil
 import re
@@ -7,9 +8,10 @@ import importlib as imp
 from filecmp import dircmp
 
 CLEAR_SCREEN = False
+ANSI_PREV_LINE = '\033[1G\033[1A\033[0J'
 
 
-def get_folder_size(path: str):
+def get_folder_size(path: str) -> int:
     total_size = 0
     for dirPath, dirNames, filenames in os.walk(path):
         for f in filenames:
@@ -17,6 +19,37 @@ def get_folder_size(path: str):
             if not os.path.islink(fp):
                 total_size += os.path.getsize(fp)
     return total_size
+
+
+def get_folder_size_from_info(path: str) -> int:
+    if INFO_FILE_NAME in os.listdir(path):
+        with open(path + '\\' + INFO_FILE_NAME, 'r') as _info_file:
+            return int(_info_file.readline())
+    else:
+        _save_size = get_folder_size(path)
+        with open(path + '\\' + INFO_FILE_NAME, 'w') as _info_file:
+            _info_file.write(str(_save_size))
+        return _save_size
+
+
+def print_progress(ratio):
+    bar_len = 20
+    filled_len = int(bar_len * ratio + 0.5)
+    print(ANSI_PREV_LINE, end='')
+    print('[' + '#' * filled_len + ' ' * (bar_len - filled_len) + '] ' + str(int(ratio * 100 + 0.5)) + '%')
+
+
+def run_with_progress(task, ratio_delegate):
+    print()
+    thread = threading.Thread(target=task)
+    thread.start()
+    ratio = ratio_delegate()
+    while ratio < 1:
+        print_progress(ratio)
+        time.sleep(0.05)
+        ratio = ratio_delegate()
+    thread.join()
+    print(ANSI_PREV_LINE, end='')
 
 
 class ConsoleStyles:
@@ -102,13 +135,7 @@ while command != 'q':
     current_save_size = get_folder_size(CURRENT_SAVE)
     for (index, (save, creation_time)) in enumerate(saves):
         is_equal_to_current = False
-        if INFO_FILE_NAME in os.listdir(SAVES_DIR + '\\' + save):
-            with open(SAVES_DIR + '\\' + save + '\\' + INFO_FILE_NAME, 'r') as info_file:
-                save_size = int(info_file.readline())
-        else:
-            save_size = get_folder_size(SAVES_DIR + '\\' + save)
-            with open(SAVES_DIR + '\\' + save + '\\' + INFO_FILE_NAME, 'w') as info_file:
-                info_file.write(str(save_size))
+        save_size = get_folder_size_from_info(SAVES_DIR + '\\' + save)
         if save_size == current_save_size:
             dir_cmp_result = dircmp(CURRENT_SAVE, SAVES_DIR + '\\' + save)
             if len(dir_cmp_result.diff_files) == 0:
@@ -136,6 +163,7 @@ while command != 'q':
     command = ''
     parameter = ''
     user_input = input('S (Save) | L (Load) | P (Play) | D (Delete) | Q (Quit) >> ').lower().strip().split(maxsplit=1)
+    print()
     if not user_input:
         continue
     if len(user_input) > 0:
@@ -171,7 +199,9 @@ while command != 'q':
             else:
                 print('Saving...')
                 dirname = SAVES_DIR + '\\' + save_name
-                shutil.copytree(CURRENT_SAVE, dirname)
+                target_size = get_folder_size(CURRENT_SAVE)
+                run_with_progress(lambda: shutil.copytree(CURRENT_SAVE, dirname),
+                                  lambda: get_folder_size(dirname) / target_size)
                 with open(dirname + '\\' + INFO_FILE_NAME, 'w', encoding='utf-8') as info_file:
                     info_file.write(str(get_folder_size(dirname)))
 
@@ -205,7 +235,10 @@ while command != 'q':
                 print('Loading...')
                 if os.path.exists(CURRENT_SAVE):
                     shutil.rmtree(CURRENT_SAVE)
-                shutil.copytree(SAVES_DIR + '\\' + saves[save_index - 1][0], CURRENT_SAVE)
+                selected_save = SAVES_DIR + '\\' + saves[save_index - 1][0]
+                target_size = get_folder_size_from_info(selected_save)
+                run_with_progress(lambda: shutil.copytree(selected_save, CURRENT_SAVE),
+                                  lambda: get_folder_size(CURRENT_SAVE) / target_size)
                 if INFO_FILE_NAME in os.listdir(CURRENT_SAVE):
                     os.remove(CURRENT_SAVE + '\\' + INFO_FILE_NAME)
 
@@ -221,7 +254,7 @@ while command != 'q':
                     else:
                         shutil.rmtree(SAVES_DIR + '\\' + saves[save_index - 1][0])
 
-        print('\nDone!')
+        print('Done!')
 
     elif command in ('sda', 'sma', 'sdr', 'smr'):
         if not shortcuts_enabled:
