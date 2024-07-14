@@ -18,13 +18,13 @@
 
 ### To delete a save:
 - Open NoitaSaves, enter "D" (Delete)
-- Choose the save's index ("A" for all)
+- Choose the save's index ("A" for all, "{X} - {Y}" for interval)
 
 > You can input commands in lower-case
 
-> You can input a full command one-line, e.g. "L 4", "d2", "s my save"
+> You can input a full command one-line, e.g. "l 4", "d a", "s my save"
 
-> You can stick parameters to load and delete commands, e.g. "ll", "d1"
+> You can stick parameters to load and delete commands, e.g. "ll", "d1-5"
 
 ## Also:
 ### You can launch Noita directly from NoitaSaves
@@ -63,13 +63,13 @@ Just enter "P" (Play)
 
 ### Чтобы удалить сейв:
 - Откройте NoitaSaves, введите "D" (Delete)
-- Выберите номер сохранения
+- Выберите номер сохранения ("A" - удалить всё, "{X} - {Y}" - выбрать интервал)
 
 > Команды можно вводить в нижнем регистре
 
-> Можно вводить полную команду в одну строку, например "L 4", "d2", "s my save"
+> Можно вводить полную команду в одну строку, например "l 4", "d a", "s my save"
 
-> Параметр и команду удаления или загрузки можно писать слитно, например "ll", "d1"
+> Параметр и команду удаления или загрузки можно писать слитно, например "ll", "d1-5"
 
 ## Также:
 ### Можно запустить Noita прямо из NoitaSaves

@@ -222,12 +222,18 @@ def main():
                     if not 0 < save_index <= len(saves):
                         error_message = 'Incorrect index'
                         continue
-                elif command == 'd' and parameter in ('a', 'all'):
-                    print(ConsoleStyles.WARNING + 'Are you sure? [Y/N]', ConsoleStyles.ENDC, end=' >> ')
+                elif command == 'd' and parameter == 'a':
+                    print(f'{ConsoleStyles.WARNING}Are you sure?{ConsoleStyles.ENDC} [y/N]', end=' >> ')
                     if input().strip().lower() != 'y':
                         continue
                     parameter = 'all'
-                elif command == 'l' and parameter in ('l', 'last'):
+                elif command == 'd' and '-' in parameter:
+                    start, end = parameter.split('-')
+                    if not start.isdecimal() or not end.isdecimal() or not (0 < int(start) <= int(end) <= len(saves)):
+                        error_message = 'Incorrect index'
+                        continue
+                    save_index = (int(start), int(end))
+                elif command == 'l' and parameter == 'l':
                     save_index = len(saves)
                 else:
                     error_message = 'Incorrect index'
@@ -250,9 +256,9 @@ def main():
                         for (save, _) in saves:
                             shutil.rmtree(SAVES_DIR + '\\' + save)
                     else:
-                        if save_index == -1:
-                            for (save, _) in saves:
-                                shutil.rmtree(SAVES_DIR + '\\' + save)
+                        if '-' in parameter:
+                            for i in range(save_index[0], save_index[1] + 1):
+                                shutil.rmtree(SAVES_DIR + '\\' + saves[i - 1][0])
                         else:
                             shutil.rmtree(SAVES_DIR + '\\' + saves[save_index - 1][0])
 
