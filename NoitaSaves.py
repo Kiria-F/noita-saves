@@ -28,6 +28,15 @@ def calc_folder_size(path: str) -> int:
     return total_size
 
 
+def calc_folder_containment(path: str) -> int:
+    total_count = 0
+    for dirPath, dirNames, filenames in os.walk(path):
+        for f in filenames:
+            fp = os.path.join(dirPath, f)
+            total_count += 1
+    return total_count
+
+
 def get_folder_size_from_info_or_recalc_new(path: str) -> int:
     if INFO_FILE_NAME in os.listdir(path):
         with open(path + '\\' + INFO_FILE_NAME, 'r') as info_file:
@@ -201,9 +210,9 @@ def main():
                 else:
                     print('Saving...')
                     dirname = SAVES_DIR + '\\' + save_name
-                    target_size = calc_folder_size(CURRENT_SAVE)
+                    target_containment = calc_folder_containment(CURRENT_SAVE)
                     run_with_progress(lambda: shutil.copytree(CURRENT_SAVE, dirname),
-                                      lambda: calc_folder_size(dirname) / target_size)
+                                      lambda: calc_folder_containment(dirname) / target_containment)
                     with open(dirname + '\\' + INFO_FILE_NAME, 'w', encoding='utf-8') as info_file:
                         info_file.write(str(calc_folder_size(dirname)))
 
@@ -244,9 +253,9 @@ def main():
                     if os.path.exists(CURRENT_SAVE):
                         shutil.rmtree(CURRENT_SAVE)
                     selected_save = SAVES_DIR + '\\' + saves[save_index - 1][0]
-                    target_size = get_folder_size_from_info_or_recalc_new(selected_save)
+                    target_containment = calc_folder_containment(selected_save)
                     run_with_progress(lambda: shutil.copytree(selected_save, CURRENT_SAVE),
-                                      lambda: calc_folder_size(CURRENT_SAVE) / target_size)
+                                      lambda: calc_folder_containment(CURRENT_SAVE) / target_containment)
                     if INFO_FILE_NAME in os.listdir(CURRENT_SAVE):
                         os.remove(CURRENT_SAVE + '\\' + INFO_FILE_NAME)
 
