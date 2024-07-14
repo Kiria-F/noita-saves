@@ -227,7 +227,6 @@ def main():
                                       ' >> ')
                 if parameter.isdecimal():
                     save_index = int(parameter)
-                    parameter = None
                     if not 0 < save_index <= len(saves):
                         error_message = 'Incorrect index'
                         continue
