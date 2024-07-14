@@ -265,8 +265,14 @@ def main():
                             shutil.rmtree(SAVES_DIR + '\\' + save)
                     else:
                         if '-' in parameter:
+                            progress = 0
+                            total = save_index[1] - save_index[0] + 1
+                            print()
                             for i in range(save_index[0], save_index[1] + 1):
                                 shutil.rmtree(SAVES_DIR + '\\' + saves[i - 1][0])
+                                progress += 1
+                                print_progress(progress / total)
+                            print('\033[1G\033[1A\033[0J', end='')
                         else:
                             shutil.rmtree(SAVES_DIR + '\\' + saves[save_index - 1][0])
 
