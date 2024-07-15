@@ -17,6 +17,8 @@ GAME_DIR = APPDATA + r'\Nolla_Games_Noita'
 SAVES_DIR = APPDATA + r'\Nolla_Games_Noita_Saves'
 CURRENT_SAVE = GAME_DIR + r'\save00'
 
+PREV_LINE = '\033[1G\033[1A\033[0J'
+
 
 def calc_folder_size(path: str) -> int:
     total_size = 0
@@ -31,9 +33,7 @@ def calc_folder_size(path: str) -> int:
 def calc_folder_containment(path: str) -> int:
     total_count = 0
     for dirPath, dirNames, filenames in os.walk(path):
-        for f in filenames:
-            fp = os.path.join(dirPath, f)
-            total_count += 1
+        total_count += len(filenames)
     return total_count
 
 
@@ -51,7 +51,7 @@ def get_folder_size_from_info_or_recalc_new(path: str) -> int:
 def print_progress(ratio):
     bar_len = 20
     filled_len = int(bar_len * ratio + 0.5)
-    print('\033[1G\033[1A\033[0J', end='')
+    print(PREV_LINE, end='')
     print('[' + '#' * filled_len + ' ' * (bar_len - filled_len) + '] ' + str(int(ratio * 100 + 0.5)) + '%')
 
 
@@ -65,7 +65,7 @@ def run_with_progress(task, ratio_delegate):
         time.sleep(0.05)
         ratio = ratio_delegate()
     thread.join()
-    print('\033[1G\033[1A\033[0J', end='')
+    print(PREV_LINE, end='')
 
 
 class ConsoleStyles:
@@ -110,15 +110,19 @@ def main():
         input('Press Enter to continue...')
         print('\n')
 
-    github_link = f'{ConsoleStyles.OKBLUE}https://github.com/Sedo-KFM/NoitaSaves{ConsoleStyles.ENDC}'
-    print(f'''Welcome to NoitaSaves!\n
-     > To make a save, you should save and quit the game
-     > You also need to close Noita before loading a save
-       {ConsoleStyles.WARNING}Do not load a save during Steam sync! It may corrupt the save!{ConsoleStyles.ENDC}
-     > If the selected save has not loaded, just load it one more time
-       (It may happen due to steam sync)
-     > You can also create a shortcut for NoitaSaves on your start menu or desktop
-       (Check github page for more info: {github_link})''')
+    print('''{h}Welcome to NoitaSaves!{e}\n
+> {w}To make a save, you should first quit the game{e}
+> {w}You also need to close Noita before loading a save{e}
+> {w}Turn off Steam sync in the game settings{e} (if it's enabled)
+  > {w}Otherwise, do not load a save during Steam sync, it may corrupt the current game state{e}
+  > {w}If the selected save has not loaded, just load it one more time{e}
+    (It may happen due to steam sync)
+> {w}You can also create a shortcut for NoitaSaves on your start menu or desktop{e}
+  (Check github page for more info: {b}https://github.com/Sedo-KFM/NoitaSaves{e})'''.format(
+        h=ConsoleStyles.HEADER,
+        w=ConsoleStyles.WARNING,
+        e=ConsoleStyles.ENDC,
+        b=ConsoleStyles.BOLD))
 
     if not os.path.exists(SAVES_DIR):
         os.mkdir(SAVES_DIR)
@@ -140,9 +144,11 @@ def main():
                 os.system('cls')
 
         print('\n\nSaves:')
+        print('Loading...')
         saves = [(save, os.path.getctime(SAVES_DIR + '\\' + save)) for save in os.listdir(SAVES_DIR)]
         saves.sort(key=lambda s: s[1])
         current_save_size = calc_folder_size(CURRENT_SAVE)
+        print(PREV_LINE, end='')
         for (index, (save, creation_time)) in enumerate(saves):
             is_equal_to_current = False
             save_size = get_folder_size_from_info_or_recalc_new(SAVES_DIR + '\\' + save)
@@ -272,7 +278,7 @@ def main():
                                 shutil.rmtree(SAVES_DIR + '\\' + saves[i - 1][0])
                                 progress += 1
                                 print_progress(progress / total)
-                            print('\033[1G\033[1A\033[0J', end='')
+                            print(PREV_LINE, end='')
                         else:
                             shutil.rmtree(SAVES_DIR + '\\' + saves[save_index - 1][0])
 
