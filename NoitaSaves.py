@@ -1,10 +1,10 @@
-import sys
+import importlib as imp
 import os
+import re
+import shutil
+import sys
 import threading
 import time
-import shutil
-import re
-import importlib as imp
 from filecmp import dircmp
 
 CLEAR_SCREEN = False
@@ -82,18 +82,17 @@ class ConsoleStyles:
 def main():
     any_alert = False
     version = sys.version_info
-    if (version.major, version.minor) != (3, 11):
+    msg = ''
+    if (version.major, version.minor) < (3, 11):
         any_alert = True
         version = sys.version_info
         version = str(version.major) + '.' + str(version.minor)
         version += ' ' * (12 - len(version))
-        print('''
-    +---------------ALERT---------------+
+        msg += """
     | You are using Python {version} |
     | Python 3.11 is recommended        |
     | Some features may be unavailable  |
-    +-----------------------------------+
-    '''.format(version=version))
+    +-----------------------------------+""".format(version=version)
 
     shortcuts_enabled = True
     try:
@@ -101,16 +100,23 @@ def main():
     except ImportError:
         any_alert = True
         shortcuts_enabled = False
-        print('''| Module win32com not found         |
+        msg += """
+    | Module win32com not found         |
     | Shortcut feature is unavailable   |
-    +-----------------------------------+
-    ''')
+    | Run "pip install pywin32" to fix  |
+    +-----------------------------------+"""
 
     if any_alert:
-        input('Press Enter to continue...')
+        print(
+            """
+    +---------------ALERT---------------+"""
+            + msg
+        )
+        input('\nPress Enter to continue...')
         print('\n')
 
-    print('''{h}Welcome to NoitaSaves!{e}\n
+    print(
+        """{h}Welcome to NoitaSaves!{e}\n
 > {w}To make a save, you should first quit the game{e}
 > {w}You also need to close Noita before loading a save{e}
 > {w}Turn off Steam sync in the game settings{e} (if it's enabled)
@@ -118,11 +124,10 @@ def main():
   > {w}If the selected save has not loaded, just load it one more time{e}
     (It may happen due to steam sync)
 > {w}You can also create a shortcut for NoitaSaves on your start menu or desktop{e}
-  (Check github page for more info: {b}https://github.com/Sedo-KFM/NoitaSaves{e})'''.format(
-        h=ConsoleStyles.HEADER,
-        w=ConsoleStyles.WARNING,
-        e=ConsoleStyles.ENDC,
-        b=ConsoleStyles.BOLD))
+  (Check github page for more info: {b}https://github.com/Sedo-KFM/NoitaSaves{e})""".format(
+            h=ConsoleStyles.HEADER, w=ConsoleStyles.WARNING, e=ConsoleStyles.ENDC, b=ConsoleStyles.BOLD
+        )
+    )
 
     if not os.path.exists(SAVES_DIR):
         os.mkdir(SAVES_DIR)
@@ -132,7 +137,6 @@ def main():
     command = ''
     first_time = True
     while command != 'q':
-
         if error_message != '':
             input('\n' + ConsoleStyles.ERROR + 'Error: ' + error_message + ConsoleStyles.ENDC + '\n\nPress Enter...')
             error_message = ''
@@ -149,7 +153,7 @@ def main():
         saves.sort(key=lambda s: s[1])
         current_save_size = calc_folder_size(CURRENT_SAVE)
         print(PREV_LINE, end='')
-        for (index, (save, creation_time)) in enumerate(saves):
+        for index, (save, creation_time) in enumerate(saves):
             is_equal_to_current = False
             save_size = get_folder_size_from_info_or_recalc_new(SAVES_DIR + '\\' + save)
             if save_size == current_save_size:
@@ -157,21 +161,23 @@ def main():
                 if len(dir_cmp_result.diff_files) == 0:
                     is_equal_to_current = True
             printing_save = save.replace('_', ' ')
-            print(ConsoleStyles.BOLD + ConsoleStyles.OKGREEN if is_equal_to_current else '',
-                  '#', index + 1,
-                  ' ' if index < 9 else '',
-                  ' >> ', printing_save,
-                  '' if is_equal_to_current else ConsoleStyles.ENDC + ConsoleStyles.GRAY,
-                  '  [',
-                  ' '.join(
-                      time.ctime(creation_time)
-                      .replace('  ', ' ')
-                      .split(' ')[1:4]),
-                  ' | ',
-                  '{:1.2f}'.format(save_size / 1000 / 1000), ' Mb',
-                  ']',
-                  ConsoleStyles.ENDC,
-                  sep='')
+            print(
+                ConsoleStyles.BOLD + ConsoleStyles.OKGREEN if is_equal_to_current else '',
+                '#',
+                index + 1,
+                ' ' if index < 9 else '',
+                ' >> ',
+                printing_save,
+                '' if is_equal_to_current else ConsoleStyles.ENDC + ConsoleStyles.GRAY,
+                '  [',
+                ' '.join(time.ctime(creation_time).replace('  ', ' ').split(' ')[1:4]),
+                ' | ',
+                '{:1.2f}'.format(save_size / 1000 / 1000),
+                ' Mb',
+                ']',
+                ConsoleStyles.ENDC,
+                sep='',
+            )
         if len(saves) == 0:
             print('<< Nothing >>')
         print()
@@ -192,7 +198,6 @@ def main():
             command = command[0]
 
         if command in ('l', 's', 'd'):  # :D
-
             if not os.path.exists(GAME_DIR):
                 error_message = 'Game files not found'
                 continue
@@ -217,8 +222,10 @@ def main():
                     print('Saving...')
                     dirname = SAVES_DIR + '\\' + save_name
                     target_containment = calc_folder_containment(CURRENT_SAVE)
-                    run_with_progress(lambda: shutil.copytree(CURRENT_SAVE, dirname),
-                                      lambda: calc_folder_containment(dirname) / target_containment)
+                    run_with_progress(
+                        lambda: shutil.copytree(CURRENT_SAVE, dirname),
+                        lambda: calc_folder_containment(dirname) / target_containment,
+                    )
                     with open(dirname + '\\' + INFO_FILE_NAME, 'w', encoding='utf-8') as info_file:
                         info_file.write(str(calc_folder_size(dirname)))
 
@@ -228,9 +235,9 @@ def main():
                     continue
                 save_index = None
                 if parameter == '':
-                    parameter = input('Select the save index ' +
-                                      ('(or "a" (all))' if command == 'd' else '(or "l" (last))') +
-                                      ' >> ')
+                    parameter = input(
+                        'Select the save index ' + ('(or "a" (all))' if command == 'd' else '(or "l" (last))') + ' >> '
+                    )
                 if parameter.isdecimal():
                     save_index = int(parameter)
                     if not 0 < save_index <= len(saves):
@@ -259,15 +266,17 @@ def main():
                         shutil.rmtree(CURRENT_SAVE)
                     selected_save = SAVES_DIR + '\\' + saves[save_index - 1][0]
                     target_containment = calc_folder_containment(selected_save)
-                    run_with_progress(lambda: shutil.copytree(selected_save, CURRENT_SAVE),
-                                      lambda: calc_folder_containment(CURRENT_SAVE) / target_containment)
+                    run_with_progress(
+                        lambda: shutil.copytree(selected_save, CURRENT_SAVE),
+                        lambda: calc_folder_containment(CURRENT_SAVE) / target_containment,
+                    )
                     if INFO_FILE_NAME in os.listdir(CURRENT_SAVE):
                         os.remove(CURRENT_SAVE + '\\' + INFO_FILE_NAME)
 
                 elif command == 'd':
                     print('Deleting...')
                     if parameter == 'a':
-                        for (save, _) in saves:
+                        for save, _ in saves:
                             shutil.rmtree(SAVES_DIR + '\\' + save)
                     else:
                         if '-' in parameter:
@@ -300,7 +309,7 @@ def main():
                 shortcut_removed = True
 
             if 'a' in command:
-                shell = win32com_client.Dispatch("WScript.Shell")
+                shell = win32com_client.Dispatch('WScript.Shell')
                 shortcut = shell.CreateShortCut(shortcut_path)
                 shortcut.Targetpath = os.getcwd() + '\\' + FILENAME + '.py'
                 shortcut.IconLocation = os.getcwd() + '\\' + FILENAME + '.ico'
@@ -322,4 +331,9 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except Exception as e:
+        print(ConsoleStyles.ERROR + 'CRITICAL ERROR:' + ConsoleStyles.ENDC)
+        print(e)
+        input('Press Enter to exit...')
