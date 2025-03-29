@@ -40,7 +40,7 @@ Just enter "P" (Play)
 | SDR     | **R**emove the **S**hortcut from the **D**esktop      |
 | SMR     | **R**emove the **S**hortcut from the Start **M**enu   |
 
-> Python 3.11 is required  
+> Python 3.11 or newer is required  
 > 
 > It also may work with other versions  
 > since 3.9, but some features may be unabled  
@@ -85,7 +85,7 @@ Just enter "P" (Play)
 | SDR     | Убрать ярлык с рабочего стола           |
 | SMR     | Убрать ярлык из меню Пуск               |
 
-> Для запуска требуется Python 3.11  
+> Для запуска требуется Python 3.11 или новее 
 > 
 > Скрипт так же должен работать на других версиях,  
 > начиная с 3.9, но с ограничением по функциональности  
