@@ -60,10 +60,13 @@ def run_with_progress(task, ratio_delegate):
     thread = threading.Thread(target=task)
     thread.start()
     ratio = ratio_delegate()
-    while ratio < 1:
-        print_progress(ratio)
+    print_progress(ratio)
+    while thread.is_alive():
         time.sleep(0.05)
-        ratio = ratio_delegate()
+        new_ratio = ratio_delegate()
+        if new_ratio != ratio:
+            print_progress(ratio)
+            ratio = new_ratio
     thread.join()
     print(PREV_LINE, end='')
 
@@ -247,7 +250,6 @@ def main():
                     print(f'{ConsoleStyles.WARNING}Are you sure?{ConsoleStyles.ENDC} [y/N]', end=' >> ')
                     if input().strip().lower() != 'y':
                         continue
-                    parameter = 'all'
                 elif command == 'd' and '-' in parameter:
                     start, end = parameter.split('-')
                     if not start.isdecimal() or not end.isdecimal() or not (0 < int(start) <= int(end) <= len(saves)):
@@ -276,21 +278,19 @@ def main():
                 elif command == 'd':
                     print('Deleting...')
                     if parameter == 'a':
-                        for save, _ in saves:
-                            shutil.rmtree(SAVES_DIR + '\\' + save)
+                        rm_saves = [save for save, _ in saves]
+                    elif '-' in parameter:
+                        rm_saves = [save for save, _ in saves[save_index[0] : save_index[1] + 1]]
                     else:
-                        if '-' in parameter:
-                            progress = 0
-                            total = save_index[1] - save_index[0] + 1
-                            print()
-                            for i in range(save_index[0], save_index[1] + 1):
-                                shutil.rmtree(SAVES_DIR + '\\' + saves[i - 1][0])
-                                progress += 1
-                                print_progress(progress / total)
-                            print(PREV_LINE, end='')
-                        else:
-                            shutil.rmtree(SAVES_DIR + '\\' + saves[save_index - 1][0])
-
+                        rm_saves = [saves[save_index - 1][0]]
+                    initial_content = sum(calc_folder_containment(SAVES_DIR + '\\' + save) for save in rm_saves)
+                    run_with_progress(
+                        lambda: [shutil.rmtree(SAVES_DIR + '\\' + save) for save in rm_saves],
+                        lambda: 1
+                        - (
+                            sum(calc_folder_containment(SAVES_DIR + '\\' + save) for save in rm_saves) / initial_content
+                        ),
+                    )
             print('Done!')
 
         elif command in ('sda', 'sma', 'sdr', 'smr'):
