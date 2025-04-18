@@ -280,7 +280,7 @@ def main():
                     if parameter == 'a':
                         rm_saves = [save for save, _ in saves]
                     elif '-' in parameter:
-                        rm_saves = [save for save, _ in saves[save_index[0] : save_index[1] + 1]]
+                        rm_saves = [save for save, _ in saves[save_index[0] - 1 : save_index[1]]]
                     else:
                         rm_saves = [saves[save_index - 1][0]]
                     initial_content = sum(calc_folder_containment(SAVES_DIR + '\\' + save) for save in rm_saves)
